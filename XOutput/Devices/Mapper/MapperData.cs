@@ -1,4 +1,5 @@
 using System;
+using CodingSeb.ExpressionEvaluator;
 using Newtonsoft.Json;
 
 namespace XOutput.Devices.Mapper
@@ -50,7 +51,12 @@ namespace XOutput.Devices.Mapper
 		/// Anti-Deadzone
 		/// </summary>
 		public double AntiDeadzone { get; set; }
+		/// <summary>
+		/// From data type
+		/// </summary>
+		public string? ValueFunction { get; set; }
 
+		private readonly ExpressionEvaluator evaluator = new();
 		private InputSource source;
 
 		public MapperData()
@@ -79,28 +85,48 @@ namespace XOutput.Devices.Mapper
 			else
 			{
 				var readValue = value;
+				var deadzonedValue = readValue;
 
 				if (Math.Abs(readValue - 0.5) < Deadzone)
 				{
-					readValue = 0.5;
+					deadzonedValue = 0.5;
 				}
 
-				if (AntiDeadzone != 0)
+				if (ValueFunction == null)
 				{
-					var sign = readValue < 0.5 ? -1 : 1;
-					readValue = (((Math.Abs((readValue - 0.5) * 2) * (1 - AntiDeadzone)) + AntiDeadzone) * sign / 2) + 0.5;
+					if (AntiDeadzone != 0)
+					{
+						var sign = deadzonedValue < 0.5 ? -1 : 1;
+						readValue = (((Math.Abs((deadzonedValue - 0.5) * 2) * (1 - AntiDeadzone)) + AntiDeadzone) * sign / 2) + 0.5;
+					}
+					mappedValue = (readValue - MinValue) / range;
+				}
+				else
+				{
+					try
+					{
+						// we set the variables every time because we do not know if the script changed them
+						evaluator.Variables["MinValue"] = MinValue;
+						evaluator.Variables["MaxValue"] = MaxValue;
+						evaluator.Variables["Deadzone"] = Deadzone;
+						evaluator.Variables["AntiDeadzone"] = AntiDeadzone;
+						evaluator.Variables["Range"] = range;
+						evaluator.Variables["RawValue"] = value;
+						evaluator.Variables["Value"] = deadzonedValue;
+						evaluator.Variables["x"] = deadzonedValue;
+
+						mappedValue = evaluator.ScriptEvaluate<double>(ValueFunction);
+					}
+					catch
+					{
+						// in case of error just always be zero
+						// this way one notices that something is very wrong
+						mappedValue = 0;
+					}
 				}
 
-				mappedValue = (readValue - MinValue) / range;
-
-				if (mappedValue < 0)
-				{
-					mappedValue = 0;
-				}
-				else if (mappedValue > 1)
-				{
-					mappedValue = 1;
-				}
+				// clamp value to 0-1 range
+				mappedValue = Math.Min(Math.Max(mappedValue, 0), 1);
 			}
 			return mappedValue;
 		}
