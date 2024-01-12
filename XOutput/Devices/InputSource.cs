@@ -78,7 +78,7 @@ namespace XOutput.Devices
 
 		public double Get(XInputTypes type)
 		{
-			if (inputDevice != null)
+			if (inputDevice is not FakeDevice)
 			{
 				return inputDevice.Get(this);
 			}
