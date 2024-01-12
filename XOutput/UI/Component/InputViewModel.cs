@@ -27,14 +27,23 @@ namespace XOutput.UI.Component
 		public void Edit()
 		{
 			HidGuardianManager hidGuardianManager = ApplicationContext.Global.Resolve<HidGuardianManager>();
-			var controllerSettingsWindow = new InputSettingsWindow(new InputSettingsViewModel(new InputSettingsModel(), hidGuardianManager, Model.Device, isAdmin), Model.Device);
+			var device = Model.Device;
+			if (device == null)
+			{
+				return;
+			}
+			var controllerSettingsWindow = new InputSettingsWindow(new InputSettingsViewModel(new InputSettingsModel(), hidGuardianManager, device, isAdmin), device);
 			controllerSettingsWindow.ShowDialog();
 		}
 
 		public void Dispose()
 		{
 			timer.Tick -= Timer_Tick;
-			Model.Device.InputChanged -= InputDevice_InputChanged;
+			var device = Model.Device;
+			if (device != null)
+			{
+				device.InputChanged -= InputDevice_InputChanged;
+			}
 		}
 
 		private void Timer_Tick(object? sender, EventArgs e)

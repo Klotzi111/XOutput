@@ -23,7 +23,7 @@ namespace XOutput.Devices
 		/// <summary>
 		/// The device of the source.
 		/// </summary>
-		public IInputDevice InputDevice => inputDevice;
+		public IInputDevice? InputDevice => inputDevice;
 		/// <summary>
 		/// The offset of the source.
 		/// </summary>
@@ -41,13 +41,13 @@ namespace XOutput.Devices
 		/// </summary>
 		public bool IsButton => type == InputSourceTypes.Button;
 
-		protected IInputDevice inputDevice;
+		protected IInputDevice? inputDevice;
 		protected string name;
 		protected InputSourceTypes type;
 		protected int offset;
 		protected double value;
 
-		protected InputSource(IInputDevice inputDevice, string name, InputSourceTypes type, int offset)
+		protected InputSource(IInputDevice? inputDevice, string name, InputSourceTypes type, int offset)
 		{
 			this.inputDevice = inputDevice;
 			this.name = name;
@@ -78,7 +78,7 @@ namespace XOutput.Devices
 
 		public double Get(XInputTypes type)
 		{
-			if (inputDevice is not FakeDevice)
+			if (inputDevice != null)
 			{
 				return inputDevice.Get(this);
 			}
@@ -91,7 +91,7 @@ namespace XOutput.Devices
 		public static InputSource Instance => instance;
 		private static InputSource instance = new DisabledInputSource();
 
-		private DisabledInputSource() : base(new FakeDevice(), "", InputSourceTypes.Disabled, 0)
+		private DisabledInputSource() : base(null, "", InputSourceTypes.Disabled, 0)
 		{
 
 		}

@@ -36,6 +36,10 @@ namespace XOutput.UI.Converters
 			{
 				key = (bool)values[1] ? "True" : "False";
 			}
+			else if (values[1] is null)
+			{
+				return null;
+			}
 			else
 			{
 				return values[1].ToString();

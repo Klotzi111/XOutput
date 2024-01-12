@@ -6,8 +6,8 @@ namespace XOutput.UI.Component
 	public class InputModel : ModelBase
 	{
 		// assign fallback so we can ensure that the controller is never null
-		private IInputDevice device = new FakeDevice();
-		public IInputDevice Device
+		private IInputDevice? device;
+		public IInputDevice? Device
 		{
 			get => device;
 			set

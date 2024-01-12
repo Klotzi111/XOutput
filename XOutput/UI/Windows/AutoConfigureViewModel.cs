@@ -189,7 +189,11 @@ namespace XOutput.UI.Windows
 			if (Model.MaxType == null)
 				return;
 
-			double current = Model.MaxType.InputDevice.Get(Model.MaxType);
+			var device = Model.MaxType.InputDevice;
+			if (device == null)
+				return;
+
+			double current = device.Get(Model.MaxType);
 
 			double min = Math.Min(current, Model.MinValue / 100);
 			double minValue = Math.Round(min * 100);
@@ -210,7 +214,11 @@ namespace XOutput.UI.Windows
 			if (Model.MaxType == null)
 				return;
 
-			double current = Model.MaxType.InputDevice.Get(Model.MaxType);
+			var device = Model.MaxType.InputDevice;
+			if (device == null)
+				return;
+
+			double current = device.Get(Model.MaxType);
 			double reference = referenceValues[Model.MaxType];
 
 			double min = Math.Min(current, reference);
