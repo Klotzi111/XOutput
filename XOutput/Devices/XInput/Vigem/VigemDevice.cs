@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
+using XOutput.Logging;
 
 namespace XOutput.Devices.XInput.Vigem
 {
@@ -12,6 +14,8 @@ namespace XOutput.Devices.XInput.Vigem
 	/// </summary>
 	public sealed class VigemDevice : IXOutputInterface
 	{
+		private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(VigemDevice));
+
 		private readonly ViGEmClient client;
 		private readonly Dictionary<int, IXbox360Controller> controllers = new Dictionary<int, IXbox360Controller>();
 		private readonly Dictionary<XInputTypes, VigemXbox360ButtonMapping> buttonMappings = new Dictionary<XInputTypes, VigemXbox360ButtonMapping>();
@@ -115,7 +119,14 @@ namespace XOutput.Devices.XInput.Vigem
 			{
 				controller.Disconnect();
 			}
-			client.Dispose();
+			try
+			{
+				client.Dispose();
+			}
+			catch (SEHException)
+			{
+				logger.Error("VigemClient Dispose failed");
+			}
 		}
 
 		public IXbox360Controller GetController(int controllerCount)

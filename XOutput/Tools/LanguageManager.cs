@@ -23,7 +23,7 @@ namespace XOutput.Tools
 		/// </summary>
 		public static LanguageManager Instance => instance;
 
-		private string language = "English";
+		private string language = "";
 		/// <summary>
 		/// Gets or sets the current language.
 		/// </summary>
