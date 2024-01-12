@@ -1,5 +1,3 @@
-using System;
-
 namespace XOutput.Devices.Input
 {
 	/// <summary>
