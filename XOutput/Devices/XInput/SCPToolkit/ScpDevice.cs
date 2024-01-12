@@ -20,8 +20,9 @@ namespace XOutput.Devices.XInput.SCPToolkit
 		public ScpDevice() : this(0) { }
 		public ScpDevice(int instance)
 		{
-			string devicePath = "";
-			if (NativeMethods.Find(new Guid(SCPBusClassGUID), ref devicePath, instance))
+			string? devicePath = null;
+			if (NativeMethods.Find(new Guid(SCPBusClassGUID), ref devicePath, instance)
+				&& devicePath != null)
 			{
 				safeFileHandle = NativeMethods.GetHandle(devicePath);
 			}
@@ -41,7 +42,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 		/// <returns></returns>
 		public static bool IsAvailable()
 		{
-			string devicePath = "";
+			string? devicePath = null;
 			return NativeMethods.Find(new Guid(SCPBusClassGUID), ref devicePath, 0);
 		}
 
@@ -102,7 +103,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 			return SendToDevice(NativeMethods.MessageType.Report, controllerCount, GetBinaryData(values), null);
 		}
 
-		private bool SendToDevice(NativeMethods.MessageType type, int? controller, byte[] input, byte[] output)
+		private bool SendToDevice(NativeMethods.MessageType type, int? controller, byte[] input, byte[]? output)
 		{
 			if (safeFileHandle.IsInvalid || safeFileHandle.IsClosed)
 			{

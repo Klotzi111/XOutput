@@ -8,9 +8,9 @@ namespace XOutput.Devices.Input.Mouse
 {
 	public class MouseHook : IDisposable
 	{
-		public event MouseHookEvent MouseEvent;
+		public event MouseHookEvent? MouseEvent;
 		private IntPtr hookPtr = IntPtr.Zero;
-		private HookProc hook;
+		private HookProc? hook;
 
 		public void StartHook()
 		{
@@ -57,7 +57,7 @@ namespace XOutput.Devices.Input.Mouse
 			State = state;
 		}
 
-		internal static MouseHookEventArgs Create(MouseMessage wParam, IntPtr lParam)
+		internal static MouseHookEventArgs? Create(MouseMessage wParam, IntPtr lParam)
 		{
 			switch (wParam)
 			{
@@ -84,7 +84,8 @@ namespace XOutput.Devices.Input.Mouse
 
 		internal static MouseButton GetButton(IntPtr lParam)
 		{
-			MSLLHOOKSTRUCT msLLHookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+			// can not be null because it is a struct
+			MSLLHOOKSTRUCT msLLHookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT))!;
 			return (msLLHookStruct.mouseData >> 16) == 1 ? MouseButton.XButton1 : MouseButton.XButton2;
 		}
 	}

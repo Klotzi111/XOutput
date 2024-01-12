@@ -9,7 +9,7 @@ namespace XOutput.UI.Component
 	/// </summary>
 	public partial class ControllerView : UserControl, IViewBase<ControllerViewModel, ControllerModel>
 	{
-		public event Action<ControllerView> RemoveClicked;
+		public event Action<ControllerView>? RemoveClicked;
 
 		protected readonly ControllerViewModel viewModel;
 		public ControllerViewModel ViewModel => viewModel;
@@ -20,6 +20,7 @@ namespace XOutput.UI.Component
 			DataContext = viewModel;
 			InitializeComponent();
 		}
+
 		private void OpenClick(object sender, RoutedEventArgs e)
 		{
 			viewModel.Edit();

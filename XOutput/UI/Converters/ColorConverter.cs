@@ -78,16 +78,21 @@ namespace XOutput.UI.Converters
 		/// <returns></returns>
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (parameter is not string strParameter)
+			{
+				throw new ArgumentException("Parameter must be a string");
+			}
+
 			XInputTypes? activeType = values[0] as XInputTypes?;
 			bool? highlight = values[1] as bool?;
-			var parameters = (parameter as string).Split('|');
+			var parameters = strParameter.Split('|');
 			bool back = parameters.Length > 1 && parameters[1] == "back";
 			bool label = parameters.Length > 1 && parameters[1] == "label";
 			if (parameters[0] == "DPAD")
 			{
 				if (back)
 				{
-					if (highlight == true && XInputHelper.Instance.IsDPad(activeType.Value))
+					if (highlight == true && activeType != null && XInputHelper.Instance.IsDPad(activeType.Value))
 					{
 						return HighlightBackBrush;
 					}

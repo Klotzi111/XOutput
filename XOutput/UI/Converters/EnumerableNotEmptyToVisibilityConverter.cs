@@ -23,7 +23,12 @@ namespace XOutput.UI.Converters
 		/// <returns></returns>
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var testValue = (value as IEnumerable).Cast<object>().Any();
+			if (value is not IEnumerable enumerableValue)
+			{
+				throw new ArgumentException("Value must be a IEnumerable");
+			}
+
+			var testValue = enumerableValue.Cast<object>().Any();
 			if (parameter is string && (string)parameter == "invert")
 			{
 				testValue = !testValue;

@@ -39,7 +39,7 @@ namespace XOutput.UpdateChecker
 		public async Task<VersionCompare> CompareRelease()
 		{
 			VersionCompare compare;
-			HttpResponseMessage response = null;
+			HttpResponseMessage? response = null;
 			try
 			{
 				await logger.Debug("Getting " + GithubURL);

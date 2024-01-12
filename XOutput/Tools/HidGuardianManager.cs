@@ -20,15 +20,15 @@ namespace XOutput.Tools
 
 		public List<string> GetDevices()
 		{
-			object value = RegistryModifier.GetValue(Registry.LocalMachine, parameters, affectedDevices);
-			if (value is string[])
+			var value = RegistryModifier.GetValue(Registry.LocalMachine, parameters, affectedDevices);
+			if (value is string[] strArray)
 			{
-				return new List<string>(value as string[]);
+				return new List<string>(strArray);
 			}
 			return new List<string>();
 		}
 
-		public void AddAffectedDevice(string device)
+		public void AddAffectedDevice(string? device)
 		{
 			if (device == null)
 			{
@@ -39,7 +39,7 @@ namespace XOutput.Tools
 			RegistryModifier.SetValue(Registry.LocalMachine, parameters, affectedDevices, devices.ToArray());
 		}
 
-		public bool RemoveAffectedDevice(string device)
+		public bool RemoveAffectedDevice(string? device)
 		{
 			if (device == null)
 			{
@@ -54,8 +54,12 @@ namespace XOutput.Tools
 			return removed;
 		}
 
-		public bool IsAffected(string device)
+		public bool IsAffected(string? device)
 		{
+			if (device == null)
+			{
+				return false;
+			}
 			var devices = GetDevices();
 			return devices.Contains(device);
 		}

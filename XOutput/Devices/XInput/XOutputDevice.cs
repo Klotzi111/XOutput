@@ -25,7 +25,7 @@ namespace XOutput.Devices.XInput
 		/// This event is invoked if the data from the device was updated
 		/// <para>Implements <see cref="IDevice.InputChanged"/></para>
 		/// </summary>
-		public event DeviceInputChangedHandler InputChanged;
+		public event DeviceInputChangedHandler? InputChanged;
 		#endregion
 
 		#region Properties

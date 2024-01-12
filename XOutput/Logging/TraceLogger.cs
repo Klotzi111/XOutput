@@ -44,13 +44,13 @@ namespace XOutput.Logging
 		/// <param name="methodName">name of the caller method</param>
 		/// <param name="log">log text</param>
 		/// <returns></returns>
-		protected override Task Log(LogLevel loglevel, string methodName, string log)
+		protected override Task Log(LogLevel loglevel, string? methodName, string log)
 		{
 			currentTask = currentTask.ContinueWith((t) => DoLog(loglevel, methodName, log));
 			return currentTask;
 		}
 
-		private void DoLog(LogLevel loglevel, string methodName, string log)
+		private void DoLog(LogLevel loglevel, string? methodName, string log)
 		{
 			System.Diagnostics.Trace.WriteLine(CreatePrefix(DateTime.Now, loglevel, LoggerType.FullName, methodName) + log);
 		}

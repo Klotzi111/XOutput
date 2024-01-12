@@ -19,30 +19,26 @@ namespace XOutput.UI.Converters
 		/// <param name="parameter">Ignored</param>
 		/// <param name="culture">Ignored</param>
 		/// <returns></returns>
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			Dictionary<string, string> translations = values[0] as Dictionary<string, string>;
+			var translations = values[0] as Dictionary<string, string>;
 			string key;
 			if (values[1] is Enum)
 			{
 				key = values[1].GetType().Name + "." + values[1].ToString();
 				return GetTranslation(translations, key) ?? values[1].ToString();
 			}
-			else if (values[1] is string)
+			else if (values[1] is string val1Str)
 			{
-				key = values[1] as string;
+				key = val1Str;
 			}
 			else if (values[1] is bool)
 			{
 				key = (bool)values[1] ? "True" : "False";
 			}
-			else if (values[1] is sbyte || values[1] is byte || values[1] is char || values[1] is short || values[1] is ushort || values[1] is int || values[1] is uint || values[1] is long || values[1] is ulong || values[1] is decimal)
-			{
-				return values[1].ToString();
-			}
 			else
 			{
-				key = values[1] as string;
+				return values[1].ToString();
 			}
 			return GetTranslation(translations, key) ?? key;
 		}
@@ -60,7 +56,7 @@ namespace XOutput.UI.Converters
 			throw new NotImplementedException();
 		}
 
-		protected string GetTranslation(Dictionary<string, string> translations, string key)
+		protected string? GetTranslation(Dictionary<string, string>? translations, string key)
 		{
 			if (translations == null || key == null || !translations.ContainsKey(key))
 			{

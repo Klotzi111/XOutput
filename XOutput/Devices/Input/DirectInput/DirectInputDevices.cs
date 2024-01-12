@@ -54,7 +54,7 @@ namespace XOutput.Devices.Input.DirectInput
 		/// </summary>
 		/// <param name="deviceInstance">native instance</param>
 		/// <returns>Wrapped instance</returns>
-		public DirectDevice CreateDirectDevice(DeviceInstance deviceInstance)
+		public DirectDevice? CreateDirectDevice(DeviceInstance deviceInstance)
 		{
 			try
 			{

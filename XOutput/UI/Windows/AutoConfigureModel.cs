@@ -24,8 +24,8 @@ namespace XOutput.UI.Windows
 			get => highlight;
 			set { if (highlight != value) { highlight = value; OnPropertyChanged(nameof(Highlight)); } }
 		}
-		private InputSource maxType;
-		public InputSource MaxType
+		private InputSource? maxType;
+		public InputSource? MaxType
 		{
 			get => maxType;
 			set { if (maxType != value) { maxType = value; OnPropertyChanged(nameof(MaxType)); } }

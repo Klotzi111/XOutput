@@ -30,7 +30,7 @@ namespace XOutput.Tools
 			AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 		}
 
-		private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		private Assembly? CurrentDomain_AssemblyResolve(object? sender, ResolveEventArgs args)
 		{
 			foreach (var package in packages)
 			{
@@ -43,10 +43,15 @@ namespace XOutput.Tools
 			return null;
 		}
 
-		private Assembly LoadAssemblyFromResource(string resourceName)
+		private Assembly? LoadAssemblyFromResource(string resourceName)
 		{
 			using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
 			{
+				if (stream == null)
+				{
+					return null;
+				}
+
 				byte[] assemblyData = new byte[stream.Length];
 				stream.Read(assemblyData, 0, assemblyData.Length);
 				return Assembly.Load(assemblyData);

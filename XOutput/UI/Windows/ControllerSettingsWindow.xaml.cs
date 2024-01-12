@@ -24,7 +24,7 @@ namespace XOutput.UI.Windows
 			InitializeComponent();
 		}
 
-		private void WindowLoaded(object sender, RoutedEventArgs e)
+		private void WindowLoaded(object? sender, RoutedEventArgs e)
 		{
 			viewModel.Update();
 			timer.Interval = TimeSpan.FromMilliseconds(10);
@@ -32,7 +32,7 @@ namespace XOutput.UI.Windows
 			timer.Start();
 		}
 
-		private void TimerTick(object sender, EventArgs e)
+		private void TimerTick(object? sender, EventArgs e)
 		{
 			viewModel.Update();
 		}
@@ -45,24 +45,29 @@ namespace XOutput.UI.Windows
 			base.OnClosed(e);
 		}
 
-		private void ConfigureAllButtonClick(object sender, RoutedEventArgs e)
+		private void ConfigureAllButtonClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.ConfigureAll();
 		}
 
-		private void CheckBoxChecked(object sender, RoutedEventArgs e)
+		private void CheckBoxChecked(object? sender, RoutedEventArgs e)
 		{
 			viewModel.SetStartWhenConnected();
 		}
 
-		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void ComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			viewModel.SetForceFeedback();
 		}
 
-		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+		private void TextBox_TextChanged(object? sender, TextChangedEventArgs e)
 		{
-			controller.Mapper.Name = ViewModel.Model.Title;
+			var title = ViewModel.Model.Title;
+			if (title == null)
+			{
+				throw new Exception($"{nameof(ViewModel.Model.Title)} cannot be null.");
+			}
+			controller.Mapper.Name = title;
 		}
 	}
 }

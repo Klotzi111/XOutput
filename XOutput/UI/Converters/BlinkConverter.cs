@@ -22,9 +22,14 @@ namespace XOutput.UI.Converters
 		/// <returns></returns>
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (parameter is not string strParameter)
+			{
+				throw new ArgumentException("Parameter must be a string");
+			}
+
 			XInputTypes? activeType = values[0] as XInputTypes?;
 			bool? highlight = values[1] as bool?;
-			var parameters = (parameter as string).Split('|');
+			var parameters = strParameter.Split('|');
 			var currentType = (XInputTypes)Enum.Parse(typeof(XInputTypes), parameters[0]);
 			bool back = parameters.Length > 1 && parameters[1] == "back";
 			if (back)

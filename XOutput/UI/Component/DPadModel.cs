@@ -46,8 +46,8 @@ namespace XOutput.UI.Component
 			}
 		}
 
-		private string label;
-		public string Label
+		private string? label;
+		public string? Label
 		{
 			get => label;
 			set

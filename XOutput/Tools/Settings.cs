@@ -25,7 +25,11 @@ namespace XOutput.Tools
 			{
 
 				var text = File.ReadAllText(filePath);
-				settings = JsonConvert.DeserializeObject<Settings>(text);
+				var tempSettings = JsonConvert.DeserializeObject<Settings>(text);
+				if (tempSettings != null)
+				{
+					settings = tempSettings;
+				}
 			}
 			return settings;
 		}
@@ -66,7 +70,7 @@ namespace XOutput.Tools
 		/// </summary>
 		/// <param name="id">DeviceID</param>
 		/// <returns></returns>
-		public InputMapper GetMapper(string id)
+		public InputMapper? GetMapper(string id)
 		{
 			var mapper = Mapping.FirstOrDefault(m => m.Id == id);
 			return mapper;
@@ -82,9 +86,7 @@ namespace XOutput.Tools
 			var mapper = Mapping.FirstOrDefault(m => m.Id == id);
 			if (mapper == null)
 			{
-				mapper = new InputMapper();
-				mapper.Id = id;
-				mapper.Name = "Controller";
+				mapper = new InputMapper(id, "Controller");
 				foreach (var type in XInputHelper.Instance.Values)
 				{
 					mapper.SetMapping(type, new MapperDataCollection(new MapperData()));

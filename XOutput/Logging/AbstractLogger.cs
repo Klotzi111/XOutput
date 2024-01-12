@@ -21,15 +21,21 @@ namespace XOutput.Logging
 			this.level = level;
 		}
 
-		protected string GetCallerMethodName()
+		protected string? GetCallerMethodName()
 		{
-			MethodBase method = new StackTrace().GetFrame(2).GetMethod();
-			bool asyncFunction = method.DeclaringType.Name.Contains("<") && method.DeclaringType.Name.Contains(">");
+			MethodBase? method = new StackTrace().GetFrame(2)?.GetMethod();
+			if (method == null)
+			{
+				return null;
+			}
+
+			var declaringType = method.DeclaringType;
+			bool asyncFunction = declaringType == null ? false : (declaringType.Name.Contains("<") && declaringType.Name.Contains(">"));
 			if (asyncFunction)
 			{
-				int openIndex = method.DeclaringType.Name.IndexOf("<");
-				int closeIndex = method.DeclaringType.Name.IndexOf(">");
-				return method.DeclaringType.Name.Substring(openIndex + 1, closeIndex - openIndex - 1);
+				int openIndex = declaringType!.Name.IndexOf("<");
+				int closeIndex = declaringType!.Name.IndexOf(">");
+				return declaringType!.Name.Substring(openIndex + 1, closeIndex - openIndex - 1);
 			}
 			else
 			{
@@ -37,7 +43,7 @@ namespace XOutput.Logging
 			}
 		}
 
-		protected string CreatePrefix(DateTime time, LogLevel loglevel, string classname, string methodname)
+		protected string CreatePrefix(DateTime time, LogLevel loglevel, string? classname, string? methodname)
 		{
 			return $"{time.ToString("yyyy-MM-dd HH\\:mm\\:ss.fff zzz")} {loglevel.Text} {classname}.{methodname}: ";
 		}
@@ -102,7 +108,7 @@ namespace XOutput.Logging
 			return LogCheck(LogLevel.Error, GetCallerMethodName(), ex.ToString());
 		}
 
-		protected Task LogCheck(LogLevel loglevel, string methodName, string log)
+		protected Task LogCheck(LogLevel loglevel, string? methodName, string log)
 		{
 			if (loglevel.Level >= Level)
 			{
@@ -111,7 +117,7 @@ namespace XOutput.Logging
 			return Task.Run(() => { });
 		}
 
-		protected Task LogCheck(LogLevel loglevel, string methodName, Func<string> log)
+		protected Task LogCheck(LogLevel loglevel, string? methodName, Func<string> log)
 		{
 			if (loglevel.Level >= Level)
 			{
@@ -127,6 +133,6 @@ namespace XOutput.Logging
 		/// <param name="methodName">name of the caller method</param>
 		/// <param name="log">log text</param>
 		/// <returns></returns>
-		protected abstract Task Log(LogLevel loglevel, string methodName, string log);
+		protected abstract Task Log(LogLevel loglevel, string? methodName, string log);
 	}
 }

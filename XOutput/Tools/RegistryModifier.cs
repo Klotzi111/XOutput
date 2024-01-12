@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Microsoft.Win32;
 using XOutput.Logging;
@@ -30,6 +31,10 @@ namespace XOutput.Tools
 			{
 				using (var key = GetRegistryKey())
 				{
+					if (key == null)
+					{
+						throw new Exception("Could not find Registry key.");
+					}
 					bool exists = key.GetValue(AutostartValueKey) != null;
 					logger.Debug($"{AutostartValueKey} registry is " + (exists ? "" : "not ") + "found");
 					return exists;
@@ -55,7 +60,11 @@ namespace XOutput.Tools
 		{
 			using (var key = GetRegistryKey())
 			{
-				var filename = Process.GetCurrentProcess().MainModule.FileName;
+				if (key == null)
+				{
+					throw new Exception("Could not find Registry key.");
+				}
+				var filename = Process.GetCurrentProcess().MainModule?.FileName;
 				string value = $"\"{filename}\" {AutostartParams}";
 				key.SetValue(AutostartValueKey, value);
 				logger.Debug($"{AutostartValueKey} registry set to {value}");
@@ -69,12 +78,16 @@ namespace XOutput.Tools
 		{
 			using (var key = GetRegistryKey())
 			{
+				if (key == null)
+				{
+					throw new Exception("Could not find Registry key.");
+				}
 				key.DeleteValue(AutostartValueKey);
 				logger.Debug($"{AutostartValueKey} registry is deleted");
 			}
 		}
 
-		private static RegistryKey GetRegistryKey(bool writeable = true)
+		private static RegistryKey? GetRegistryKey(bool writeable = true)
 		{
 			return Registry.CurrentUser.OpenSubKey(AutostartRegistry, writeable);
 		}
@@ -99,22 +112,22 @@ namespace XOutput.Tools
 			registry.Close();
 		}
 
-		public static object GetValue(RegistryKey registryKey, string subkey, string key)
+		public static object? GetValue(RegistryKey registryKey, string subkey, string key)
 		{
-			return registryKey.OpenSubKey(subkey).GetValue(key);
+			return registryKey.OpenSubKey(subkey)?.GetValue(key);
 		}
 
 		public static void SetValue(RegistryKey registryKey, string subkey, string key, object value)
 		{
 			using (var registry = registryKey.OpenSubKey(subkey, true))
 			{
-				registry.SetValue(key, value);
+				registry?.SetValue(key, value);
 			}
 		}
 
-		public static string[] GetSubKeyNames(RegistryKey registryKey, string subkey)
+		public static string[]? GetSubKeyNames(RegistryKey registryKey, string subkey)
 		{
-			return registryKey.OpenSubKey(subkey).GetSubKeyNames();
+			return registryKey.OpenSubKey(subkey)?.GetSubKeyNames();
 		}
 	}
 }

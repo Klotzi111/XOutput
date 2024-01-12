@@ -12,9 +12,8 @@ namespace XOutput.UI.Windows
 		private readonly ObservableCollection<IUpdatableView> inputButtonViews = new ObservableCollection<IUpdatableView>();
 		public ObservableCollection<IUpdatableView> InputButtonViews => inputButtonViews;
 
-
-		private string title;
-		public string Title
+		private string? title;
+		public string? Title
 		{
 			get => title;
 			set
@@ -27,8 +26,8 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private string forceFeedbackText;
-		public string ForceFeedbackText
+		private string? forceFeedbackText;
+		public string? ForceFeedbackText
 		{
 			get => forceFeedbackText;
 			set
@@ -41,8 +40,8 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private string testButtonText;
-		public string TestButtonText
+		private string? testButtonText;
+		public string? TestButtonText
 		{
 			get => testButtonText;
 			set

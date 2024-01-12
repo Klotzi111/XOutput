@@ -11,8 +11,8 @@ namespace XOutput
 		private static LanguageModel instance = new LanguageModel();
 		public static LanguageModel Instance => instance;
 
-		private Dictionary<string, string> data;
-		public Dictionary<string, string> Data
+		private Dictionary<string, string>? data;
+		public Dictionary<string, string>? Data
 		{
 			get => data;
 			set
@@ -30,11 +30,11 @@ namespace XOutput
 			return Translate(data, key);
 		}
 
-		public static string Translate(Dictionary<string, string> translation, string key)
+		public static string Translate(Dictionary<string, string>? translation, string key)
 		{
 			if (translation == null || key == null || !translation.ContainsKey(key))
 			{
-				return key;
+				return key!;
 			}
 			return translation[key];
 		}

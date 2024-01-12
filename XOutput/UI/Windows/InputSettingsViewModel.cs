@@ -83,7 +83,7 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private void DispatcherTimerTick(object sender, EventArgs e)
+		private void DispatcherTimerTick(object? sender, EventArgs e)
 		{
 			if (state == 0)
 			{

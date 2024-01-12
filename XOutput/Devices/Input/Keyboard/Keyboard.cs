@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Input;
+using XOutput.UI;
 
 namespace XOutput.Devices.Input.Keyboard
 {
@@ -23,12 +24,12 @@ namespace XOutput.Devices.Input.Keyboard
 		/// Triggered periodically to trigger input read from keyboards.
 		/// <para>Implements <see cref="IDevice.InputChanged"/></para>
 		/// </summary>
-		public event DeviceInputChangedHandler InputChanged;
+		public event DeviceInputChangedHandler? InputChanged;
 		/// <summary>
 		/// Never used.
 		/// <para>Implements <see cref="IInputDevice.Disconnected"/></para>
 		/// </summary>
-		public event DeviceDisconnectedHandler Disconnected;
+		public event DeviceDisconnectedHandler? Disconnected;
 		#endregion
 
 		#region Properties
@@ -66,7 +67,7 @@ namespace XOutput.Devices.Input.Keyboard
 		/// <para>Implements <see cref="IInputDevice.InputConfiguration"/></para>
 		/// </summary>
 		public InputConfig InputConfiguration => inputConfig;
-		public string HardwareID => null;
+		public string? HardwareID => null;
 		#endregion
 
 		private readonly Thread inputRefresher;

@@ -20,9 +20,9 @@ namespace XOutput.UI.Converters
 		/// <returns></returns>
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			Dictionary<string, string> translation = value as Dictionary<string, string>;
-			string key = parameter as string;
-			return LanguageModel.Translate(translation, key);
+			var translation = value as Dictionary<string, string>;
+			var key = parameter as string;
+			return LanguageModel.Translate(translation, key ?? "");
 		}
 
 		/// <summary>

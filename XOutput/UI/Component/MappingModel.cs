@@ -21,8 +21,8 @@ namespace XOutput.UI
 			}
 		}
 
-		private InputSource selectedInput;
-		public InputSource SelectedInput
+		private InputSource? selectedInput;
+		public InputSource? SelectedInput
 		{
 			get => selectedInput;
 			set
@@ -101,7 +101,7 @@ namespace XOutput.UI
 			}
 		}
 
-		private MapperData mapperData;
+		private MapperData mapperData = new MapperData();
 		public MapperData MapperData
 		{
 			get => mapperData;

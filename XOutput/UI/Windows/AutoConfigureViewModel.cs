@@ -25,7 +25,7 @@ namespace XOutput.UI.Windows
 		private XInputTypes xInputType;
 		private readonly InputSource[] inputTypes;
 		private DateTime lastTime;
-		public Func<bool> IsMouseOverButtons { get; set; }
+		public Func<bool>? IsMouseOverButtons { get; set; }
 
 		public AutoConfigureViewModel(AutoConfigureModel model, IEnumerable<IInputDevice> inputDevices, InputMapper mapper, XInputTypes[] valuesToRead) : base(model)
 		{
@@ -49,7 +49,7 @@ namespace XOutput.UI.Windows
 			timer.Start();
 		}
 
-		private void TimerTick(object sender, EventArgs e)
+		private void TimerTick(object? sender, EventArgs e)
 		{
 			Model.Highlight = !Model.Highlight;
 		}
@@ -86,7 +86,7 @@ namespace XOutput.UI.Windows
 				return;
 			}
 			var inputDevice = e.Device;
-			InputSource maxType = null;
+			InputSource? maxType = null;
 			double maxDiff = 0;
 			foreach (var type in e.ChangedValues)
 			{
@@ -186,6 +186,9 @@ namespace XOutput.UI.Windows
 
 		private void CalculateValues()
 		{
+			if (Model.MaxType == null)
+				return;
+
 			double current = Model.MaxType.InputDevice.Get(Model.MaxType);
 
 			double min = Math.Min(current, Model.MinValue / 100);
@@ -204,6 +207,9 @@ namespace XOutput.UI.Windows
 
 		private void CalculateStartValues()
 		{
+			if (Model.MaxType == null)
+				return;
+
 			double current = Model.MaxType.InputDevice.Get(Model.MaxType);
 			double reference = referenceValues[Model.MaxType];
 

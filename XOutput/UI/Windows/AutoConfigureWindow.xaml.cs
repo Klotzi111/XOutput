@@ -23,7 +23,7 @@ namespace XOutput.UI.Windows
 			InitializeComponent();
 		}
 
-		private async void WindowLoaded(object sender, RoutedEventArgs e)
+		private async void WindowLoaded(object? sender, RoutedEventArgs e)
 		{
 			await Task.Delay(100);
 			viewModel.Initialize();
@@ -39,7 +39,7 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private void TimerTick(object sender, EventArgs e)
+		private void TimerTick(object? sender, EventArgs e)
 		{
 			if (viewModel.IncreaseTime())
 			{
@@ -51,7 +51,7 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private void DisableClick(object sender, RoutedEventArgs e)
+		private void DisableClick(object? sender, RoutedEventArgs e)
 		{
 			if (!viewModel.SaveDisableValues())
 			{
@@ -59,7 +59,7 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private void SaveClick(object sender, RoutedEventArgs e)
+		private void SaveClick(object? sender, RoutedEventArgs e)
 		{
 			if (!viewModel.SaveValues())
 			{
@@ -67,12 +67,12 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private void CancelClick(object sender, RoutedEventArgs e)
+		private void CancelClick(object? sender, RoutedEventArgs e)
 		{
 			Close();
 		}
 
-		private void WindowClosed(object sender, EventArgs e)
+		private void WindowClosed(object? sender, EventArgs e)
 		{
 			timer.Tick -= TimerTick;
 			timer.Stop();

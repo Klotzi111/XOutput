@@ -15,10 +15,15 @@ namespace XOutput.Tools
 
 		public T Resolve<T>()
 		{
-			return (T)Resolve(typeof(T));
+			var result = Resolve(typeof(T));
+			if (result == null)
+			{
+				throw new Exception("Cannot resolve " + typeof(T).FullName);
+			}
+			return (T)result;
 		}
 
-		private object Resolve(Type type)
+		private object? Resolve(Type type)
 		{
 			List<Resolver> currentResolvers = resolvers.Where(r => r.CreatedType.IsAssignableFrom(type)).ToList();
 			if (currentResolvers.Count == 0)
@@ -30,7 +35,7 @@ namespace XOutput.Tools
 				throw new MultipleValuesFoundException(type, currentResolvers);
 			}
 			Resolver resolver = currentResolvers[0];
-			return resolver.Create(resolver.GetDependencies().Select(d => Resolve(d)).ToArray());
+			return resolver.Create(resolver.GetDependencies().Select(Resolve).ToArray());
 		}
 
 		public List<T> ResolveAll<T>()
@@ -95,7 +100,7 @@ namespace XOutput.Tools
 		private Type[] dependencies;
 		private Type type;
 		private bool isSingleton;
-		private object singletonValue;
+		private object? singletonValue;
 		public bool IsSingleton => isSingleton;
 		public bool IsResolvedSingleton => isSingleton && singletonValue != null;
 
@@ -131,13 +136,13 @@ namespace XOutput.Tools
 			return dependencies.ToArray();
 		}
 
-		public object Create(object[] values)
+		public object? Create(object?[] values)
 		{
 			if (IsResolvedSingleton)
 			{
 				return singletonValue;
 			}
-			object value = creator.DynamicInvoke(values);
+			object? value = creator.DynamicInvoke(values);
 			if (IsSingleton)
 			{
 				singletonValue = value;

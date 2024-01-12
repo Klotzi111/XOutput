@@ -31,8 +31,8 @@ namespace XOutput.UI.Windows
 
 		private readonly DispatcherTimer timer = new DispatcherTimer();
 		private readonly DirectInputDevices directInputDevices = new DirectInputDevices();
-		private Action<string> log;
-		private Settings settings;
+		private Action<string> log = s => { };
+		private Settings settings = new Settings();
 		private bool installed;
 
 		public MainWindowViewModel(MainWindowModel model, Dispatcher dispatcher, HidGuardianManager hidGuardianManager) : base(model)
@@ -45,11 +45,11 @@ namespace XOutput.UI.Windows
 		{
 			foreach (var device in Model.Inputs.Select(x => x.ViewModel.Model.Device))
 			{
-				device.Dispose();
+				device?.Dispose();
 			}
 			foreach (var controller in Model.Controllers.Select(x => x.ViewModel.Model.Controller))
 			{
-				controller.Dispose();
+				controller?.Dispose();
 			}
 			timer.Stop();
 			directInputDevices.Dispose();
@@ -144,7 +144,13 @@ namespace XOutput.UI.Windows
 			RefreshGameControllers();
 
 			timer.Interval = TimeSpan.FromMilliseconds(5000);
-			timer.Tick += (object sender1, EventArgs e1) => { if (!settings.DisableAutoRefresh) { RefreshGameControllers(); } };
+			timer.Tick += (object? sender1, EventArgs e1) =>
+			{
+				if (!settings.DisableAutoRefresh)
+				{
+					RefreshGameControllers();
+				}
+			};
 			timer.Start();
 
 			logger.Debug("Creating keyboard controller");
@@ -256,7 +262,7 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		public void AddController(InputMapper mapper)
+		public void AddController(InputMapper? mapper)
 		{
 			var gameController = new GameController(mapper ?? settings.CreateMapper(Guid.NewGuid().ToString()));
 			Controllers.Instance.Add(gameController);
@@ -277,12 +283,15 @@ namespace XOutput.UI.Windows
 		{
 			var controller = controllerView.ViewModel.Model.Controller;
 			controllerView.ViewModel.Dispose();
-			controller.Dispose();
-			Model.Controllers.Remove(controllerView);
-			logger.Info($"{controller.ToString()} is disconnected.");
-			log(string.Format(LanguageModel.Instance.Translate("ControllerDisconnected"), controller.DisplayName));
-			Controllers.Instance.Remove(controller);
-			settings.Mapping.RemoveAll(m => m.Id == controller.Mapper.Id);
+			if (controller != null)
+			{
+				controller.Dispose();
+				Model.Controllers.Remove(controllerView);
+				logger.Info($"{controller} is disconnected.");
+				log(string.Format(LanguageModel.Instance.Translate("ControllerDisconnected"), controller.DisplayName));
+				Controllers.Instance.Remove(controller);
+				settings.Mapping.RemoveAll(m => m.Id == controller.Mapper.Id);
+			}
 		}
 
 		public void OpenWindowsGameControllerSettings()

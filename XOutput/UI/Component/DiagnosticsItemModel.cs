@@ -1,15 +1,15 @@
 using System.Collections.ObjectModel;
 using XOutput.Diagnostics;
 
-namespace XOutput.UI
+namespace XOutput.UI.Component
 {
 	public class DiagnosticsItemModel : ModelBase
 	{
 		private readonly ObservableCollection<DiagnosticsResult> results = new ObservableCollection<DiagnosticsResult>();
 		public ObservableCollection<DiagnosticsResult> Results => results;
 
-		private string source;
-		public string Source
+		private string? source;
+		public string? Source
 		{
 			get => source;
 			set

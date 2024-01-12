@@ -42,7 +42,7 @@ namespace XOutput.Logging
 		{
 			foreach (var property in obj.GetType().GetProperties().Where(p => p.CanRead))
 			{
-				object value;
+				object? value;
 				try
 				{
 					value = property.GetValue(obj, null);
@@ -78,7 +78,7 @@ namespace XOutput.Logging
 			}
 			foreach (var field in obj.GetType().GetFields().Where(f => f.IsPublic))
 			{
-				object value;
+				object? value;
 				try
 				{
 					value = field.GetValue(obj);

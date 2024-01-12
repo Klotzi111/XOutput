@@ -43,17 +43,17 @@ namespace XOutput.Devices
 		/// <summary>
 		/// Gets the force feedback device.
 		/// </summary>
-		public IInputDevice ForceFeedbackDevice { get; set; }
+		public IInputDevice? ForceFeedbackDevice { get; set; }
 
 		private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(GameController));
 
 		private readonly InputMapper mapper;
 		private readonly XOutputDevice xInput;
-		private readonly IXOutputInterface xOutputInterface;
-		private Thread thread;
+		private readonly IXOutputInterface? xOutputInterface;
+		private Thread? thread;
 		private bool running;
 		private int controllerCount = 0;
-		private Nefarius.ViGEm.Client.Targets.IXbox360Controller controller;
+		private Nefarius.ViGEm.Client.Targets.IXbox360Controller? controller;
 
 		public GameController(InputMapper mapper)
 		{
@@ -71,7 +71,7 @@ namespace XOutput.Devices
 			running = false;
 		}
 
-		private IXOutputInterface CreateXOutput()
+		private IXOutputInterface? CreateXOutput()
 		{
 			if (VigemDevice.IsAvailable())
 			{
@@ -108,7 +108,7 @@ namespace XOutput.Devices
 		/// <summary>
 		/// Starts the emulation of the device
 		/// </summary>
-		public int Start(Action onStop = null)
+		public int Start(Action? onStop = null)
 		{
 			if (!HasXOutputInstalled)
 			{
@@ -118,6 +118,10 @@ namespace XOutput.Devices
 			if (controller != null)
 			{
 				controller.FeedbackReceived -= ControllerFeedbackReceived;
+			}
+			if (xOutputInterface == null)
+			{
+				return 0;
 			}
 			if (xOutputInterface.Unplug(controllerCount))
 			{
@@ -155,7 +159,7 @@ namespace XOutput.Devices
 			{
 				running = false;
 				XInput.InputChanged -= XInputInputChanged;
-				if (ForceFeedbackSupported)
+				if (ForceFeedbackSupported && controller != null)
 				{
 					controller.FeedbackReceived -= ControllerFeedbackReceived;
 					logger.Info($"Force feedback mapping is disconnected on {ToString()}.");
@@ -172,7 +176,7 @@ namespace XOutput.Devices
 			return DisplayName;
 		}
 
-		private void ReadAndReportValues(Action onStop)
+		private void ReadAndReportValues(Action? onStop)
 		{
 			try
 			{
@@ -195,7 +199,7 @@ namespace XOutput.Devices
 
 		private void XInputInputChanged(object sender, DeviceInputChangedEventArgs e)
 		{
-			if (!xOutputInterface.Report(controllerCount, XInput.GetValues()))
+			if (xOutputInterface?.Report(controllerCount, XInput.GetValues()) == true)
 			{
 				Stop();
 			}

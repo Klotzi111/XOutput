@@ -4,8 +4,8 @@ namespace XOutput.UI.Component
 {
 	public class AxisModel : ModelBase
 	{
-		private InputSource type;
-		public InputSource Type
+		private InputSource? type;
+		public InputSource? Type
 		{
 			get => type;
 			set
@@ -26,7 +26,7 @@ namespace XOutput.UI.Component
 				if (this.value != value)
 				{
 					this.value = value;
-					OnPropertyChanged(nameof(AxisModel.Value));
+					OnPropertyChanged(nameof(Value));
 				}
 			}
 		}

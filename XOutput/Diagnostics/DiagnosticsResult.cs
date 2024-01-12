@@ -7,11 +7,11 @@ namespace XOutput.Diagnostics
 		/// <summary>
 		/// Gets or sets the type of the diagnostic.
 		/// </summary>
-		public Enum Type { get; set; }
+		public required Enum Type { get; set; }
 		/// <summary>
 		/// Gets or sets the result of the diagnostic.
 		/// </summary>
-		public object Value { get; set; }
+		public object? Value { get; set; }
 		/// <summary>
 		/// Gets or sets the result state of the diagnostic.
 		/// </summary>

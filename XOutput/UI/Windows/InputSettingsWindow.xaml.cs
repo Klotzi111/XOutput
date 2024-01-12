@@ -24,7 +24,7 @@ namespace XOutput.UI.Windows
 			InitializeComponent();
 		}
 
-		private void WindowLoaded(object sender, RoutedEventArgs e)
+		private void WindowLoaded(object? sender, RoutedEventArgs e)
 		{
 			viewModel.Update();
 			timer.Interval = TimeSpan.FromMilliseconds(10);
@@ -32,7 +32,7 @@ namespace XOutput.UI.Windows
 			timer.Start();
 		}
 
-		private void TimerTick(object sender, EventArgs e)
+		private void TimerTick(object? sender, EventArgs e)
 		{
 			viewModel.Update();
 		}
@@ -46,30 +46,27 @@ namespace XOutput.UI.Windows
 			base.OnClosed(e);
 		}
 
-		private void Disconnected(object sender, DeviceDisconnectedEventArgs e)
+		private void Disconnected(object? sender, DeviceDisconnectedEventArgs e)
 		{
-			Dispatcher.Invoke(() =>
-			{
-				Close();
-			});
+			Dispatcher.Invoke(Close);
 		}
 
-		private void ForceFeedbackButtonClick(object sender, RoutedEventArgs e)
+		private void ForceFeedbackButtonClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.TestForceFeedback();
 		}
 
-		private void ForceFeedbackCheckBoxChecked(object sender, RoutedEventArgs e)
+		private void ForceFeedbackCheckBoxChecked(object? sender, RoutedEventArgs e)
 		{
 			viewModel.SetForceFeedbackEnabled();
 		}
 
-		private void AddHidGuardianButtonClick(object sender, RoutedEventArgs e)
+		private void AddHidGuardianButtonClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.AddHidGuardian();
 		}
 
-		private void RemoveHidGuardianButtonClick(object sender, RoutedEventArgs e)
+		private void RemoveHidGuardianButtonClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.RemoveHidGuardian();
 		}

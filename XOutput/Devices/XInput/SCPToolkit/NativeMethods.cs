@@ -46,7 +46,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 			return buffer;
 		}
 
-		public static bool SendToDevice(SafeFileHandle safeFileHandle, MessageType type, int? controller, byte[] input, byte[] output)
+		public static bool SendToDevice(SafeFileHandle safeFileHandle, MessageType type, int? controller, byte[] input, byte[]? output)
 		{
 			if (safeFileHandle.IsInvalid || safeFileHandle.IsClosed)
 			{
@@ -60,7 +60,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 			return DeviceIoControl(safeFileHandle, (int)type, data, data.Length, output, output?.Length ?? 0, ref transfered, IntPtr.Zero);
 		}
 
-		public static bool Find(Guid target, ref string path, int instance = 0)
+		public static bool Find(Guid target, ref string? path, int instance = 0)
 		{
 			IntPtr detailDataBuffer;
 			IntPtr deviceInfoSet = IntPtr.Zero;
@@ -87,7 +87,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 					{
 						IntPtr pDevicePathName = detailDataBuffer + 4;
 
-						path = Marshal.PtrToStringAuto(pDevicePathName).ToUpper(CultureInfo.InvariantCulture);
+						path = Marshal.PtrToStringAuto(pDevicePathName)?.ToUpper(CultureInfo.InvariantCulture);
 						Marshal.FreeHGlobal(detailDataBuffer);
 
 						if (memberIndex == instance)
@@ -152,7 +152,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool DeviceIoControl(SafeFileHandle hDevice, int dwIoControlCode, byte[] lpInBuffer, int nInBufferSize, byte[] lpOutBuffer, int nOutBufferSize, ref int lpBytesReturned, IntPtr lpOverlapped);
+		private static extern bool DeviceIoControl(SafeFileHandle hDevice, int dwIoControlCode, byte[] lpInBuffer, int nInBufferSize, byte[]? lpOutBuffer, int nOutBufferSize, ref int lpBytesReturned, IntPtr lpOverlapped);
 
 		[DllImport("setupapi.dll", SetLastError = true)]
 		private static extern int SetupDiDestroyDeviceInfoList(IntPtr deviceInfoSet);

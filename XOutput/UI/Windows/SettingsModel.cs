@@ -11,12 +11,11 @@ namespace XOutput.UI.Windows
 		private readonly ObservableCollection<string> languages = new ObservableCollection<string>();
 		public ObservableCollection<string> Languages => languages;
 
-		private string selectedLanguage;
+		private string selectedLanguage = LanguageManager.Instance.Language;
 		public string SelectedLanguage
 		{
 			get
 			{
-				selectedLanguage = LanguageManager.Instance.Language;
 				return selectedLanguage;
 			}
 			set

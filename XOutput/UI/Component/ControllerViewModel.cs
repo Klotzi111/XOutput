@@ -9,11 +9,11 @@ namespace XOutput.UI.Component
 	public class ControllerViewModel : ViewModelBase<ControllerModel>, IDisposable
 	{
 		private const int BackgroundDelayMS = 500;
-		private readonly Action<string> log;
+		private readonly Action<string>? log;
 		private readonly DispatcherTimer timer = new DispatcherTimer();
 		private readonly bool isAdmin;
 
-		public ControllerViewModel(ControllerModel model, GameController controller, bool isAdmin, Action<string> log) : base(model)
+		public ControllerViewModel(ControllerModel model, GameController controller, bool isAdmin, Action<string>? log) : base(model)
 		{
 			this.log = log;
 			this.isAdmin = isAdmin;
@@ -70,12 +70,12 @@ namespace XOutput.UI.Component
 			Model.Controller.XInput.InputChanged -= InputDevice_InputChanged;
 		}
 
-		private void Timer_Tick(object sender, EventArgs e)
+		private void Timer_Tick(object? sender, EventArgs e)
 		{
 			Model.Background = Brushes.White;
 		}
 
-		private void InputDevice_InputChanged(object sender, DeviceInputChangedEventArgs e)
+		private void InputDevice_InputChanged(object? sender, DeviceInputChangedEventArgs e)
 		{
 			Model.Background = Brushes.LightGreen;
 			timer.Stop();

@@ -5,7 +5,8 @@ namespace XOutput.UI.Component
 {
 	public class ControllerModel : ModelBase
 	{
-		private GameController controller;
+		// assign fallback so we can ensure that the controller is never null
+		private GameController controller = new GameController(new Devices.Mapper.InputMapper("FAKE_NAME", "FAKE_ID"));
 		public GameController Controller
 		{
 			get => controller;
@@ -19,7 +20,8 @@ namespace XOutput.UI.Component
 			}
 		}
 
-		private string buttonText;
+		// assign fallback so we can ensure that the controller is never null
+		private string buttonText = "UNKNOWN";
 		public string ButtonText
 		{
 			get => buttonText;
@@ -60,7 +62,8 @@ namespace XOutput.UI.Component
 			}
 		}
 
-		private Brush background;
+		// assign fallback so we can ensure that the controller is never null
+		private Brush background = Brushes.White;
 		public Brush Background
 		{
 			get => background;
@@ -73,7 +76,8 @@ namespace XOutput.UI.Component
 				}
 			}
 		}
-		public string DisplayName { get { return Controller.ToString(); } }
+
+		public string DisplayName => Controller.ToString();
 
 		public void RefreshName()
 		{

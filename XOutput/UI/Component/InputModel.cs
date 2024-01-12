@@ -5,7 +5,8 @@ namespace XOutput.UI.Component
 {
 	public class InputModel : ModelBase
 	{
-		private IInputDevice device;
+		// assign fallback so we can ensure that the controller is never null
+		private IInputDevice device = new FakeDevice();
 		public IInputDevice Device
 		{
 			get => device;
@@ -19,7 +20,8 @@ namespace XOutput.UI.Component
 			}
 		}
 
-		private Brush background;
+		// assign fallback so we can ensure that the controller is never null
+		private Brush background = Brushes.White;
 		public Brush Background
 		{
 			get => background;
@@ -33,6 +35,6 @@ namespace XOutput.UI.Component
 			}
 		}
 
-		public string DisplayName { get { return string.Format("{0} ({1})", device.DisplayName, device.UniqueId); } }
+		public string DisplayName { get { return string.Format("{0} ({1})", device?.DisplayName ?? "<null>", device?.UniqueId ?? "<null>"); } }
 	}
 }

@@ -14,16 +14,16 @@ namespace XOutput.UI.Component
 			}
 		}
 
-		protected string SourceToString(object source)
+		protected string? SourceToString(object? source)
 		{
 			if (source == null)
 			{
 				return LanguageModel.Instance.Translate("System");
 			}
 
-			if (source is IInputDevice)
+			if (source is IInputDevice inputDevice)
 			{
-				return (source as IInputDevice).DisplayName;
+				return inputDevice.DisplayName;
 			}
 			return null;
 		}

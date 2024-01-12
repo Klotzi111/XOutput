@@ -31,12 +31,12 @@ namespace XOutput.Devices.Input.DirectInput
 		/// Triggered periodically to trigger input read from Direct input device.
 		/// <para>Implements <see cref="IDevice.InputChanged"/></para>
 		/// </summary>
-		public event DeviceInputChangedHandler InputChanged;
+		public event DeviceInputChangedHandler? InputChanged;
 		/// <summary>
 		/// Triggered when the any read or write fails.
 		/// <para>Implements <see cref="IInputDevice.Disconnected"/></para>
 		/// </summary>
-		public event DeviceDisconnectedHandler Disconnected;
+		public event DeviceDisconnectedHandler? Disconnected;
 		#endregion
 
 		#region Properties
@@ -89,7 +89,7 @@ namespace XOutput.Devices.Input.DirectInput
 		/// </summary>
 		public InputConfig InputConfiguration => inputConfig;
 
-		public string HardwareID
+		public string? HardwareID
 		{
 			get
 			{
@@ -107,7 +107,7 @@ namespace XOutput.Devices.Input.DirectInput
 		private readonly Joystick joystick;
 		private readonly DirectInputSource[] sources;
 		private readonly DeviceState state;
-		private readonly EffectInfo force;
+		private readonly EffectInfo? force;
 		private readonly List<DirectDeviceForceFeedback> actuators = new List<DirectDeviceForceFeedback>();
 		private readonly InputConfig inputConfig;
 		private bool connected = false;
@@ -162,17 +162,21 @@ namespace XOutput.Devices.Input.DirectInput
 				{
 					force = constantForce;
 				}
-				var actuatorAxes = joystick.GetObjects().Where(doi => doi.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToArray();
-				for (int i = 0; i < actuatorAxes.Length; i++)
+
+				if (force != null)
 				{
-					if (i + 1 < actuatorAxes.Length)
+					var actuatorAxes = joystick.GetObjects().Where(doi => doi.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToArray();
+					for (int i = 0; i < actuatorAxes.Length; i++)
 					{
-						actuators.Add(new DirectDeviceForceFeedback(joystick, force, actuatorAxes[i], actuatorAxes[i + 1]));
-						i++;
-					}
-					else
-					{
-						actuators.Add(new DirectDeviceForceFeedback(joystick, force, actuatorAxes[i]));
+						if (i + 1 < actuatorAxes.Length)
+						{
+							actuators.Add(new DirectDeviceForceFeedback(joystick, force, actuatorAxes[i], actuatorAxes[i + 1]));
+							i++;
+						}
+						else
+						{
+							actuators.Add(new DirectDeviceForceFeedback(joystick, force, actuatorAxes[i]));
+						}
 					}
 				}
 			}

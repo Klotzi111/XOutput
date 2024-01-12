@@ -61,7 +61,7 @@ namespace XOutput.UI.Windows
 
 		public void Log(string msg)
 		{
-			Dispatcher.BeginInvoke((Action)(() =>
+			Dispatcher.BeginInvoke(() =>
 			{
 				try
 				{
@@ -72,19 +72,19 @@ namespace XOutput.UI.Windows
 					logger.Error("Cannot log into the log box: " + msg + Environment.NewLine);
 					logger.Error(ex);
 				}
-			}));
+			});
 		}
 
-		private void AddControllerClick(object sender, RoutedEventArgs e)
+		private void AddControllerClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.AddController(null);
 		}
 
-		private void RefreshClick(object sender, RoutedEventArgs e)
+		private void RefreshClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.RefreshGameControllers();
 		}
-		private void ExitClick(object sender, RoutedEventArgs e)
+		private void ExitClick(object? sender, RoutedEventArgs e)
 		{
 			hardExit = true;
 			if (IsLoaded)
@@ -98,32 +98,32 @@ namespace XOutput.UI.Windows
 			}
 
 		}
-		private void GameControllersClick(object sender, RoutedEventArgs e)
+		private void GameControllersClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.OpenWindowsGameControllerSettings();
 		}
 
-		private void SaveClick(object sender, RoutedEventArgs e)
+		private void SaveClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.SaveSettings();
 		}
 
-		private void SettingsClick(object sender, RoutedEventArgs e)
+		private void SettingsClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.OpenSettings();
 		}
 
-		private void DiagnosticsClick(object sender, RoutedEventArgs e)
+		private void DiagnosticsClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.OpenDiagnostics();
 		}
 
-		private void AboutClick(object sender, RoutedEventArgs e)
+		private void AboutClick(object? sender, RoutedEventArgs e)
 		{
 			viewModel.AboutPopupShow();
 		}
 
-		private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+		private void WindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if (viewModel.GetSettings().CloseToTray && !hardExit)
 			{
@@ -135,18 +135,18 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private async void WindowClosed(object sender, EventArgs e)
+		private async void WindowClosed(object? sender, EventArgs e)
 		{
 			viewModel.Dispose();
 			await logger.Info("The application will exit.");
 		}
 
-		private void CheckBoxChecked(object sender, RoutedEventArgs e)
+		private void CheckBoxChecked(object? sender, RoutedEventArgs e)
 		{
 			viewModel.RefreshGameControllers();
 		}
 
-		private void TaskbarIconTrayMouseDoubleClick(object sender, RoutedEventArgs e)
+		private void TaskbarIconTrayMouseDoubleClick(object? sender, RoutedEventArgs e)
 		{
 			if (WindowState == WindowState.Minimized)
 			{
@@ -171,7 +171,7 @@ namespace XOutput.UI.Windows
 		{
 			Dispatcher.Invoke(() =>
 			{
-				TaskbarIconTrayMouseDoubleClick(this, null);
+				TaskbarIconTrayMouseDoubleClick(this, new RoutedEventArgs());
 			});
 		}
 	}

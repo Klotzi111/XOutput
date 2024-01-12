@@ -16,7 +16,7 @@ namespace XOutput
 	{
 		private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(App));
 
-		private MainWindowViewModel mainWindowViewModel;
+		private MainWindowViewModel? mainWindowViewModel;
 		private SingleInstanceProvider singleInstanceProvider;
 		private ArgumentParser argumentParser;
 
@@ -30,7 +30,11 @@ namespace XOutput
 			dependencyEmbedder.AddPackage("Nefarius.ViGEm.Client");
 			dependencyEmbedder.Initialize();
 			string exePath = Assembly.GetExecutingAssembly().Location;
-			string cwd = Path.GetDirectoryName(exePath);
+			var cwd = Path.GetDirectoryName(exePath);
+			if (cwd == null)
+			{
+				throw new Exception("Cannot get directory of your executable. This should never happen.");
+			}
 			Directory.SetCurrentDirectory(cwd);
 
 			ApplicationContext globalContext = ApplicationContext.Global;

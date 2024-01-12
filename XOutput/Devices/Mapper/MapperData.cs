@@ -11,11 +11,11 @@ namespace XOutput.Devices.Mapper
 		/// <summary>
 		/// From data device
 		/// </summary>
-		public string InputDevice { get; set; }
+		public string? InputDevice { get; set; }
 		/// <summary>
 		/// From data type
 		/// </summary>
-		public string InputType { get; set; }
+		public string? InputType { get; set; }
 		/// <summary>
 		/// Data source
 		/// </summary>
@@ -104,7 +104,7 @@ namespace XOutput.Devices.Mapper
 			}
 			return mappedValue;
 		}
-		public void SetSourceWithoutSaving(InputSource value)
+		public void SetSourceWithoutSaving(InputSource? value)
 		{
 			var newValue = value ?? DisabledInputSource.Instance;
 			if (newValue != source)

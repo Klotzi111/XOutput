@@ -8,7 +8,7 @@ namespace XOutput.Devices.Input
 		/// <summary>
 		/// This event is invoked if the device is disconnected.
 		/// </summary>
-		event DeviceDisconnectedHandler Disconnected;
+		event DeviceDisconnectedHandler? Disconnected;
 		/// <summary>
 		/// The friendly display name of the controller.
 		/// </summary>
@@ -24,7 +24,7 @@ namespace XOutput.Devices.Input
 		/// <summary>
 		/// Gets the hardware ID of the device.
 		/// </summary>
-		string HardwareID { get; }
+		string? HardwareID { get; }
 		/// <summary>
 		/// Gets the number of force feedback motors.
 		/// </summary>

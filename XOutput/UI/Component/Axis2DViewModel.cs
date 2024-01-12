@@ -14,8 +14,8 @@ namespace XOutput.UI.Component
 
 		public void UpdateValues(IDevice device)
 		{
-			Model.ValueX = (int)(device.Get(Model.TypeX) * Model.MaxX);
-			Model.ValueY = (int)(Model.MaxY - (device.Get(Model.TypeY) * Model.MaxY));
+			Model.ValueX = (int)(device.Get(Model.TypeX!) * Model.MaxX);
+			Model.ValueY = (int)(Model.MaxY - (device.Get(Model.TypeY!) * Model.MaxY));
 		}
 	}
 }

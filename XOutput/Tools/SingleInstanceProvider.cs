@@ -17,9 +17,9 @@ namespace XOutput.Tools
 		private const string OkResponse = "OK";
 		private const string ErrorResponse = "ERROR";
 
-		public event Action ShowEvent;
+		public event Action? ShowEvent;
 
-		private Thread notifyThread;
+		private Thread? notifyThread;
 		private readonly Mutex mutex = new Mutex(false, MutexName);
 
 		public bool TryGetLock()
@@ -39,7 +39,7 @@ namespace XOutput.Tools
 
 		public void StartNamedPipe()
 		{
-			notifyThread = new Thread(() => ReadPipe());
+			notifyThread = new Thread(ReadPipe);
 			notifyThread.IsBackground = true;
 			notifyThread.Name = "XOutputRunningAlreadyNamedPipe reader";
 			notifyThread.Start();

@@ -25,14 +25,16 @@ namespace XOutput.Devices.Mapper
 		/// <summary>
 		/// Id of the force feedback device.
 		/// </summary>
-		public string ForceFeedbackDevice { get; set; }
+		public string? ForceFeedbackDevice { get; set; }
 
 		public Dictionary<XInputTypes, MapperDataCollection> Mappings { get; set; }
 
 		private readonly ISet<IInputDevice> inputs = new HashSet<IInputDevice>();
 
-		public InputMapper()
+		public InputMapper(string name, string id)
 		{
+			Name = name;
+			Id = id;
 			Mappings = new Dictionary<XInputTypes, MapperDataCollection>();
 		}
 
@@ -57,17 +59,13 @@ namespace XOutput.Devices.Mapper
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public MapperDataCollection GetMapping(XInputTypes? type)
+		public MapperDataCollection GetMapping(XInputTypes type)
 		{
-			if (!type.HasValue)
+			if (!Mappings.ContainsKey(type))
 			{
-				return null;
+				Mappings[type] = new MapperDataCollection(new MapperData { Source = DisabledInputSource.Instance });
 			}
-			if (!Mappings.ContainsKey(type.Value))
-			{
-				Mappings[type.Value] = new MapperDataCollection(new MapperData { Source = DisabledInputSource.Instance });
-			}
-			return Mappings[type.Value];
+			return Mappings[type];
 		}
 
 		public void Attach(IEnumerable<IInputDevice> inputDevices)

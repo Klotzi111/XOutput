@@ -4,8 +4,8 @@ namespace XOutput.UI.Component
 {
 	public class Axis2DModel : ModelBase
 	{
-		public InputSource TypeX { get; set; }
-		public InputSource TypeY { get; set; }
+		public InputSource? TypeX { get; set; }
+		public InputSource? TypeY { get; set; }
 
 		private int valuex;
 		public int ValueX

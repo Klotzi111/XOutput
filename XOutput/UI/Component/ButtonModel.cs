@@ -4,8 +4,8 @@ namespace XOutput.UI.Component
 {
 	public class ButtonModel : ModelBase
 	{
-		private InputSource type;
-		public InputSource Type
+		private InputSource? type;
+		public InputSource? Type
 		{
 			get => type;
 			set

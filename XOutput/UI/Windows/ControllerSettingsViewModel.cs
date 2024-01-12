@@ -53,7 +53,7 @@ namespace XOutput.UI.Windows
 
 		public void SetForceFeedback()
 		{
-			if (Model.ForceFeedback.Tag != null)
+			if (Model.ForceFeedback?.Tag != null)
 			{
 				var device = Model.ForceFeedback.Tag as IInputDevice;
 				controller.Mapper.ForceFeedbackDevice = device?.UniqueId;

@@ -14,7 +14,7 @@ namespace XOutput.Devices.XInput
 		/// Returns null as no object can be associated with this test.
 		/// <para>Implements <see cref="IDiagnostics.Source"/></para>
 		/// </summary>
-		public object Source => null;
+		public object? Source => null;
 
 		/// <summary>
 		/// <para>Implements <see cref="IDiagnostics.GetResults()"/></para>

@@ -13,8 +13,8 @@ namespace XOutput.Devices.Input.DirectInput
 		private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(DirectDeviceForceFeedback));
 		private readonly Joystick joystick;
 		private readonly EffectInfo force;
-		private DeviceObjectInstance bigActuator;
-		public DeviceObjectInstance BigActuator
+		private DeviceObjectInstance? bigActuator;
+		public DeviceObjectInstance? BigActuator
 		{
 			get => bigActuator;
 			set
@@ -26,8 +26,8 @@ namespace XOutput.Devices.Input.DirectInput
 				}
 			}
 		}
-		private DeviceObjectInstance smallActuator;
-		public DeviceObjectInstance SmallActuator
+		private DeviceObjectInstance? smallActuator;
+		public DeviceObjectInstance? SmallActuator
 		{
 			get => smallActuator;
 			set
@@ -39,22 +39,22 @@ namespace XOutput.Devices.Input.DirectInput
 				}
 			}
 		}
-		private int[] bigAxes;
-		private int[] bigDirections;
-		private int[] smallAxes;
-		private int[] smallDirections;
-		private Effect bigEffect;
-		private Effect smallEffect;
+		private int[]? bigAxes;
+		private int[]? bigDirections;
+		private int[]? smallAxes;
+		private int[]? smallDirections;
+		private Effect? bigEffect;
+		private Effect? smallEffect;
 		private readonly int gain;
 		private readonly int samplePeriod;
 		private int axisCount;
 
-		public DirectDeviceForceFeedback(Joystick joystick, EffectInfo force, DeviceObjectInstance actuator) : this(joystick, force, actuator, null)
+		public DirectDeviceForceFeedback(Joystick joystick, EffectInfo force, DeviceObjectInstance actuator)
+			: this(joystick, force, actuator, null)
 		{
-
 		}
 
-		public DirectDeviceForceFeedback(Joystick joystick, EffectInfo force, DeviceObjectInstance bigActuator, DeviceObjectInstance smallActuator)
+		public DirectDeviceForceFeedback(Joystick joystick, EffectInfo force, DeviceObjectInstance? bigActuator, DeviceObjectInstance? smallActuator)
 		{
 			this.bigActuator = bigActuator;
 			this.smallActuator = smallActuator;
@@ -92,7 +92,7 @@ namespace XOutput.Devices.Input.DirectInput
 			}
 		}
 
-		private Effect DoForceFeedback(Effect oldEffect, int[] axes, int[] directions, double value)
+		private Effect? DoForceFeedback(Effect? oldEffect, int[]? axes, int[]? directions, double value)
 		{
 			var effectParams = new EffectParameters
 			{
@@ -150,7 +150,7 @@ namespace XOutput.Devices.Input.DirectInput
 			{
 				if (smallActuator == null)
 				{
-					bigAxes = new int[] { (int)bigActuator.ObjectId };
+					bigAxes = new int[] { (int)bigActuator!.ObjectId };
 					bigDirections = new int[] { 0 };
 					smallAxes = null;
 					smallDirections = null;
@@ -159,15 +159,15 @@ namespace XOutput.Devices.Input.DirectInput
 				{
 					bigAxes = null;
 					bigDirections = null;
-					smallAxes = new int[] { (int)smallActuator.ObjectId };
+					smallAxes = new int[] { (int)smallActuator!.ObjectId };
 					smallDirections = new int[] { 0 };
 				}
 			}
 			else
 			{
-				bigAxes = new int[] { (int)bigActuator.ObjectId, (int)smallActuator.ObjectId };
+				bigAxes = new int[] { (int)bigActuator!.ObjectId, (int)smallActuator!.ObjectId };
 				bigDirections = new int[] { 1, 0 };
-				smallAxes = new int[] { (int)smallActuator.ObjectId, (int)bigActuator.ObjectId };
+				smallAxes = new int[] { (int)smallActuator!.ObjectId, (int)bigActuator!.ObjectId };
 				smallDirections = new int[] { 1, 0 };
 			}
 		}

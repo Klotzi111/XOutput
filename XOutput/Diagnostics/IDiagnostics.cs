@@ -7,7 +7,7 @@ namespace XOutput.Diagnostics
 		/// <summary>
 		/// Gets the source of the values.
 		/// </summary>
-		object Source { get; }
+		object? Source { get; }
 		/// <summary>
 		/// Gets the result of the diagnostics.
 		/// </summary>

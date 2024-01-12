@@ -11,7 +11,7 @@ namespace XOutput.Tools
 		private static readonly Regex hidRegex = new Regex("(hid)#([^#]+)#[^#]+");
 		private static readonly Regex hidForRegistryRegex = new Regex("hid#(vid_[0-9a-f]{4}&pid_[0-9a-f]{4})[^#]*#([0-9a-f&]+)");
 
-		public static string GetHardwareId(string path)
+		public static string? GetHardwareId(string path)
 		{
 			if (string.IsNullOrEmpty(path))
 			{
@@ -20,7 +20,7 @@ namespace XOutput.Tools
 			var match = hidForRegistryRegex.Match(path);
 			if (match.Success)
 			{
-				string harwareIdFromRegistry = GetHardwareIdFromRegistryWithHidMatch(match);
+				var harwareIdFromRegistry = GetHardwareIdFromRegistryWithHidMatch(match);
 				if (harwareIdFromRegistry != null)
 				{
 					return harwareIdFromRegistry;
@@ -56,22 +56,23 @@ namespace XOutput.Tools
 			return string.Join("\\", new string[] { match.Groups[1].Value, match.Groups[2].Value }).ToUpper();
 		}
 
-		private static string GetHardwareIdFromRegistryWithHidMatch(Match match)
+		private static string? GetHardwareIdFromRegistryWithHidMatch(Match match)
 		{
 			string path = $"SYSTEM\\CurrentControlSet\\Enum\\USB\\{match.Groups[1].Value}";
-			if (RegistryModifier.KeyExists(Registry.LocalMachine, path))
+			var localMachineSubKeys = RegistryModifier.GetSubKeyNames(Registry.LocalMachine, path);
+			if (localMachineSubKeys != null)
 			{
-				foreach (string subkey in RegistryModifier.GetSubKeyNames(Registry.LocalMachine, path))
+				foreach (string subkey in localMachineSubKeys)
 				{
-					string parentIdPrefix = RegistryModifier.GetValue(Registry.LocalMachine, $"{path}\\{subkey}", "ParentIdPrefix") as string;
+					var parentIdPrefix = RegistryModifier.GetValue(Registry.LocalMachine, $"{path}\\{subkey}", "ParentIdPrefix") as string;
 					if (parentIdPrefix == null || !match.Groups[2].Value.StartsWith(parentIdPrefix))
 					{
 						continue;
 					}
-					object registryHardwareIds = RegistryModifier.GetValue(Registry.LocalMachine, $"{path}\\{subkey}", "HardwareID");
-					if (registryHardwareIds is string[])
+					var registryHardwareIds = RegistryModifier.GetValue(Registry.LocalMachine, $"{path}\\{subkey}", "HardwareID");
+					if (registryHardwareIds is string[] registryHardwareIdStringArray)
 					{
-						return (registryHardwareIds as string[]).Select(id => id.Replace("USB\\", "HID\\")).FirstOrDefault();
+						return registryHardwareIdStringArray.Select(id => id.Replace("USB\\", "HID\\")).FirstOrDefault();
 					}
 				}
 			}

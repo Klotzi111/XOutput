@@ -4,7 +4,7 @@ namespace XOutput.UI
 {
 	public abstract class ModelBase : INotifyPropertyChanged
 	{
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		/// <summary>
 		/// Invokes the property changed event

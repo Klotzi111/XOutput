@@ -5,8 +5,8 @@ namespace XOutput.UI.Windows
 {
 	public class MainWindowModel : ModelBase
 	{
-		private Tools.Settings settings;
-		public Tools.Settings Settings
+		private Tools.Settings? settings;
+		public Tools.Settings? Settings
 		{
 			get => settings;
 			set

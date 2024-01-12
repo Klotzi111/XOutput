@@ -23,8 +23,8 @@ namespace XOutput.UI.Windows
 		private readonly ObservableCollection<ComboBoxItem> forceFeedbacks = new ObservableCollection<ComboBoxItem>();
 		public ObservableCollection<ComboBoxItem> ForceFeedbacks => forceFeedbacks;
 
-		private ComboBoxItem forceFeedback;
-		public ComboBoxItem ForceFeedback
+		private ComboBoxItem? forceFeedback;
+		public ComboBoxItem? ForceFeedback
 		{
 			get => forceFeedback;
 			set
@@ -37,8 +37,8 @@ namespace XOutput.UI.Windows
 			}
 		}
 
-		private string title;
-		public string Title
+		private string? title;
+		public string? Title
 		{
 			get => title;
 			set

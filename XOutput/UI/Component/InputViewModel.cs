@@ -37,12 +37,12 @@ namespace XOutput.UI.Component
 			Model.Device.InputChanged -= InputDevice_InputChanged;
 		}
 
-		private void Timer_Tick(object sender, EventArgs e)
+		private void Timer_Tick(object? sender, EventArgs e)
 		{
 			Model.Background = Brushes.White;
 		}
 
-		private void InputDevice_InputChanged(object sender, DeviceInputChangedEventArgs e)
+		private void InputDevice_InputChanged(object? sender, DeviceInputChangedEventArgs e)
 		{
 			Model.Background = Brushes.LightGreen;
 			timer.Stop();

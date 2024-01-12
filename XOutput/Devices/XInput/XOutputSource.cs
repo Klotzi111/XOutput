@@ -1,3 +1,4 @@
+using XOutput.Devices.Input;
 using XOutput.Devices.Mapper;
 
 namespace XOutput.Devices.XInput
@@ -11,8 +12,8 @@ namespace XOutput.Devices.XInput
 
 		private readonly XInputTypes inputType;
 
-
-		public XOutputSource(string name, XInputTypes type) : base(null, name, type.GetInputSourceType(), 0)
+		public XOutputSource(string name, XInputTypes type)
+			: base(new FakeDevice(), name, type.GetInputSourceType(), 0)
 		{
 			inputType = type;
 		}

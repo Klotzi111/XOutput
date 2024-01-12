@@ -11,7 +11,7 @@ namespace XOutput.Devices
 		/// <summary>
 		/// This event is invoked if the data from the device was updated.
 		/// </summary>
-		event DeviceInputChangedHandler InputChanged;
+		event DeviceInputChangedHandler? InputChanged;
 		/// <summary>
 		/// Gets the current state of the DPads.
 		/// </summary>

@@ -31,8 +31,8 @@ namespace XOutput.UI.Component
 
 		protected static void ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			NumericTextBox numericTextBox = d as NumericTextBox;
-			if (numericTextBox.Value.HasValue)
+			var numericTextBox = d as NumericTextBox;
+			if (numericTextBox!.Value.HasValue)
 			{
 				numericTextBox.Text = decimal.Round(numericTextBox.Value.Value).ToString();
 			}
@@ -75,6 +75,10 @@ namespace XOutput.UI.Component
 					else if (Maximum.HasValue)
 					{
 						Value = Maximum.Value;
+					}
+					else
+					{
+						Value = 0m;
 					}
 				}
 				Text = decimal.Round(Value.Value).ToString();

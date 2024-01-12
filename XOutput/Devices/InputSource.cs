@@ -11,7 +11,7 @@ namespace XOutput.Devices
 		/// <summary>
 		/// This event is invoked if the data from the source was updated.
 		/// </summary>
-		public event SourceChangedEventHandler InputChanged;
+		public event SourceChangedEventHandler? InputChanged;
 		/// <summary>
 		/// The display name of the source.
 		/// </summary>
@@ -62,7 +62,7 @@ namespace XOutput.Devices
 
 		protected void InvokeChange()
 		{
-			InputChanged?.Invoke(this, null);
+			InputChanged?.Invoke(this, new SourceChangedEventArgs());
 		}
 
 		protected bool RefreshValue(double newValue)
@@ -91,7 +91,7 @@ namespace XOutput.Devices
 		public static InputSource Instance => instance;
 		private static InputSource instance = new DisabledInputSource();
 
-		private DisabledInputSource() : base(null, "", InputSourceTypes.Disabled, 0)
+		private DisabledInputSource() : base(new FakeDevice(), "", InputSourceTypes.Disabled, 0)
 		{
 
 		}
