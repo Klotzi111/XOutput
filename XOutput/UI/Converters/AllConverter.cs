@@ -22,7 +22,7 @@ namespace XOutput.UI.Converters
 		{
 			foreach (var v in values)
 			{
-				if (!(v is bool) || !((bool)v))
+				if (!(v is bool) || !(bool)v)
 				{
 					return false;
 				}

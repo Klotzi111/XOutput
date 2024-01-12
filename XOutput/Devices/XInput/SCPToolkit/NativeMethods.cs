@@ -9,7 +9,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 	/// <summary>
 	/// Native methods to call when using SCP Toolkit.
 	/// </summary>
-	static class NativeMethods
+	internal static class NativeMethods
 	{
 		public enum MessageType
 		{
@@ -118,7 +118,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 		{
 			devicePath = devicePath.ToUpper(CultureInfo.InvariantCulture);
 
-			SafeFileHandle handle = CreateFile(devicePath, (GENERIC_WRITE | GENERIC_READ), FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, UIntPtr.Zero);
+			SafeFileHandle handle = CreateFile(devicePath, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, UIntPtr.Zero);
 
 			if (handle == null || handle.IsInvalid)
 			{

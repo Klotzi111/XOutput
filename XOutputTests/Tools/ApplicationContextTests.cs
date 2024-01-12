@@ -97,7 +97,7 @@ namespace XOutput.Tools.Tests
 		}
 	}
 
-	static class Configuration
+	internal static class Configuration
 	{
 		[ResolverMethod]
 		public static int GetInt()

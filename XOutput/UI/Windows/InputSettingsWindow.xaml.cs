@@ -46,7 +46,7 @@ namespace XOutput.UI.Windows
 			base.OnClosed(e);
 		}
 
-		void Disconnected(object sender, DeviceDisconnectedEventArgs e)
+		private void Disconnected(object sender, DeviceDisconnectedEventArgs e)
 		{
 			Dispatcher.Invoke(() =>
 			{

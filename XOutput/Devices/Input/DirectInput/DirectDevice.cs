@@ -133,10 +133,10 @@ namespace XOutput.Devices.Input.DirectInput
 			{
 				dpads = Enumerable.Range(0, joystick.Capabilities.PovCount)
 					.SelectMany(i => new DirectInputSource[] {
-						new DirectInputSource(this, "DPad" + (i + 1) + " Up", InputSourceTypes.Dpad, 1000 + i * 4, state => GetDPadValue(i).HasFlag(DPadDirection.Up) ? 1 : 0),
-						new DirectInputSource(this, "DPad" + (i + 1) + " Down", InputSourceTypes.Dpad, 1001 + i * 4, state => GetDPadValue(i).HasFlag(DPadDirection.Down) ? 1 : 0),
-						new DirectInputSource(this, "DPad" + (i + 1) + " Left", InputSourceTypes.Dpad, 1002 + i * 4, state => GetDPadValue(i).HasFlag(DPadDirection.Left) ? 1 : 0),
-						new DirectInputSource(this, "DPad" + (i + 1) + " Right", InputSourceTypes.Dpad, 1003 + i * 4, state => GetDPadValue(i).HasFlag(DPadDirection.Right) ? 1 : 0),
+						new DirectInputSource(this, "DPad" + (i + 1) + " Up", InputSourceTypes.Dpad, 1000 + (i * 4), state => GetDPadValue(i).HasFlag(DPadDirection.Up) ? 1 : 0),
+						new DirectInputSource(this, "DPad" + (i + 1) + " Down", InputSourceTypes.Dpad, 1001 + (i * 4), state => GetDPadValue(i).HasFlag(DPadDirection.Down) ? 1 : 0),
+						new DirectInputSource(this, "DPad" + (i + 1) + " Left", InputSourceTypes.Dpad, 1002 + (i * 4), state => GetDPadValue(i).HasFlag(DPadDirection.Left) ? 1 : 0),
+						new DirectInputSource(this, "DPad" + (i + 1) + " Right", InputSourceTypes.Dpad, 1003 + (i * 4), state => GetDPadValue(i).HasFlag(DPadDirection.Right) ? 1 : 0),
 					});
 			}
 			sources = buttons.Concat(axes).Concat(sliders).Concat(dpads).ToArray();
@@ -504,13 +504,13 @@ namespace XOutput.Devices.Input.DirectInput
 				axisCount = instance.ObjectId.InstanceNumber;
 			}
 			string name = instance.Name;
-			return new DirectInputSource(this, name, type, instance.Offset, state => (GetAxisValue(axisCount)) / (double)ushort.MaxValue);
+			return new DirectInputSource(this, name, type, instance.Offset, state => GetAxisValue(axisCount) / (double)ushort.MaxValue);
 		}
 
 		private DirectInputSource GetSliderSource(DeviceObjectInstance instance, int i)
 		{
 			string name = instance.Name;
-			return new DirectInputSource(this, name, InputSourceTypes.Slider, instance.Offset, state => (GetSliderValue(i + 1)) / (double)ushort.MaxValue);
+			return new DirectInputSource(this, name, InputSourceTypes.Slider, instance.Offset, state => GetSliderValue(i + 1) / (double)ushort.MaxValue);
 		}
 	}
 }

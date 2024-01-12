@@ -101,7 +101,7 @@ namespace XOutput.Tools
 		}
 	}
 
-	class StreamString
+	internal class StreamString
 	{
 		private Stream ioStream;
 		private UnicodeEncoding streamEncoding;
@@ -127,9 +127,9 @@ namespace XOutput.Tools
 		{
 			byte[] outBuffer = streamEncoding.GetBytes(outString);
 			int len = outBuffer.Length;
-			if (len > UInt16.MaxValue)
+			if (len > ushort.MaxValue)
 			{
-				len = (int)UInt16.MaxValue;
+				len = (int)ushort.MaxValue;
 			}
 			ioStream.WriteByte((byte)(len / 256));
 			ioStream.WriteByte((byte)(len & 255));

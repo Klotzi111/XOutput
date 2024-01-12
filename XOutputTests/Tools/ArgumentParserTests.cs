@@ -12,10 +12,10 @@ namespace XOutput.Tools.Tests
 	[TestClass()]
 	public class ArgumentParserTests
 	{
-		[DataRow(new String[] { }, false)]
-		[DataRow(new String[] { "--minimized" }, true)]
-		[DataRow(new String[] { "other" }, false)]
-		[DataRow(new String[] { "other", "--minimized" }, true)]
+		[DataRow(new string[] { }, false)]
+		[DataRow(new string[] { "--minimized" }, true)]
+		[DataRow(new string[] { "other" }, false)]
+		[DataRow(new string[] { "other", "--minimized" }, true)]
 		[DataTestMethod]
 		public void CompareTest(string[] arguments, bool minimized)
 		{

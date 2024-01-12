@@ -51,7 +51,7 @@ namespace XOutput.Devices.Mapper
 		/// </summary>
 		public double AntiDeadzone { get; set; }
 
-		InputSource source;
+		private InputSource source;
 
 		public MapperData()
 		{
@@ -88,7 +88,7 @@ namespace XOutput.Devices.Mapper
 				if (AntiDeadzone != 0)
 				{
 					var sign = readValue < 0.5 ? -1 : 1;
-					readValue = (Math.Abs((readValue - 0.5) * 2) * (1 - AntiDeadzone) + AntiDeadzone) * sign / 2 + 0.5;
+					readValue = (((Math.Abs((readValue - 0.5) * 2) * (1 - AntiDeadzone)) + AntiDeadzone) * sign / 2) + 0.5;
 				}
 
 				mappedValue = (readValue - MinValue) / range;

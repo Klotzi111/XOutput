@@ -39,7 +39,7 @@ namespace XOutput.UI.Converters
 		{
 			if (b.HasValue)
 			{
-				return !(b.Value);
+				return !b.Value;
 			}
 			else
 			{

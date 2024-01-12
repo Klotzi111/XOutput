@@ -33,7 +33,7 @@ namespace XOutput.Logging
 		protected int level;
 		public int Level => level;
 
-		protected LogLevel(String text, int level)
+		protected LogLevel(string text, int level)
 		{
 			this.text = text;
 			this.level = level;
