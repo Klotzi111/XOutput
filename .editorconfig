@@ -1,0 +1,17 @@
+# top-most EditorConfig file
+root = true
+
+# Windows-style newlines with a newline ending every file
+# and always indent using 4 char-wide tabs
+[*]
+end_of_line = crlf
+insert_final_newline = true
+
+indent_style = tab
+indent_size = tab
+tab_size = 4
+
+spelling_languages = en-us
+
+[*.{cs,vb}]
+charset = utf-8
