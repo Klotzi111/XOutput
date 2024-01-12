@@ -1,6 +1,6 @@
+using System;
 using SharpDX;
 using SharpDX.DirectInput;
-using System;
 using XOutput.Logging;
 
 namespace XOutput.Devices.Input.DirectInput

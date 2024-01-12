@@ -1,5 +1,3 @@
-using SharpDX;
-using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +5,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
+using SharpDX;
+using SharpDX.DirectInput;
 using XOutput.Logging;
 using XOutput.Tools;
 

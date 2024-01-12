@@ -1,7 +1,7 @@
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using XOutput.Devices.Input;
 using XOutput.Devices.Mapper;
 using XOutput.Devices.XInput;
