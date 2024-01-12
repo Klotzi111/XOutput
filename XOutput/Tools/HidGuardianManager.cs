@@ -1,26 +1,26 @@
-using Microsoft.Win32;
 using System.Collections.Generic;
+using Microsoft.Win32;
 
 namespace XOutput.Tools
 {
 	public class HidGuardianManager
 	{
-		static readonly string PARAMETERS = "SYSTEM\\CurrentControlSet\\Services\\HidGuardian\\Parameters";
-		static readonly string WHITE_LIST = PARAMETERS + "\\Whitelist";
-		static readonly string AFFECTED_DEVICES = "AffectedDevices";
+		static readonly string parameters = "SYSTEM\\CurrentControlSet\\Services\\HidGuardian\\Parameters";
+		static readonly string whiteList = parameters + "\\Whitelist";
+		static readonly string affectedDevices = "AffectedDevices";
 
 		public void ResetPid(int pid)
 		{
-			if (RegistryModifier.KeyExists(Registry.LocalMachine, WHITE_LIST))
+			if (RegistryModifier.KeyExists(Registry.LocalMachine, whiteList))
 			{
-				RegistryModifier.DeleteTree(Registry.LocalMachine, WHITE_LIST);
+				RegistryModifier.DeleteTree(Registry.LocalMachine, whiteList);
 			}
-			RegistryModifier.CreateKey(Registry.LocalMachine, WHITE_LIST + "\\" + pid);
+			RegistryModifier.CreateKey(Registry.LocalMachine, whiteList + "\\" + pid);
 		}
 
 		public List<string> GetDevices()
 		{
-			object value = RegistryModifier.GetValue(Registry.LocalMachine, PARAMETERS, AFFECTED_DEVICES);
+			object value = RegistryModifier.GetValue(Registry.LocalMachine, parameters, affectedDevices);
 			if (value is string[])
 			{
 				return new List<string>(value as string[]);
@@ -36,7 +36,7 @@ namespace XOutput.Tools
 			}
 			var devices = GetDevices();
 			devices.Add(device);
-			RegistryModifier.SetValue(Registry.LocalMachine, PARAMETERS, AFFECTED_DEVICES, devices.ToArray());
+			RegistryModifier.SetValue(Registry.LocalMachine, parameters, affectedDevices, devices.ToArray());
 		}
 
 		public bool RemoveAffectedDevice(string device)
@@ -49,7 +49,7 @@ namespace XOutput.Tools
 			bool removed = devices.Remove(device);
 			if (removed)
 			{
-				RegistryModifier.SetValue(Registry.LocalMachine, PARAMETERS, AFFECTED_DEVICES, devices.ToArray());
+				RegistryModifier.SetValue(Registry.LocalMachine, parameters, affectedDevices, devices.ToArray());
 			}
 			return removed;
 		}

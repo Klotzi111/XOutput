@@ -5,7 +5,7 @@ namespace XOutput.UI.Component
 {
 	public class DPadViewModel : ViewModelBase<DPadModel>
 	{
-		private const int len = 21;
+		private const int Len = 21;
 		private readonly int dPadIndex;
 
 		public DPadViewModel(DPadModel model, int dPadIndex, bool showLabel) : base(model)
@@ -22,11 +22,11 @@ namespace XOutput.UI.Component
 			Model.Direction = device.DPads.ElementAt(dPadIndex);
 			if (Model.Direction.HasFlag(DPadDirection.Up))
 			{
-				Model.ValueY = -len;
+				Model.ValueY = -Len;
 			}
 			else if (Model.Direction.HasFlag(DPadDirection.Down))
 			{
-				Model.ValueY = len;
+				Model.ValueY = Len;
 			}
 			else
 			{
@@ -35,11 +35,11 @@ namespace XOutput.UI.Component
 			Model.ValueY += 21;
 			if (Model.Direction.HasFlag(DPadDirection.Right))
 			{
-				Model.ValueX = len;
+				Model.ValueX = Len;
 			}
 			else if (Model.Direction.HasFlag(DPadDirection.Left))
 			{
-				Model.ValueX = -len;
+				Model.ValueX = -Len;
 			}
 			else
 			{

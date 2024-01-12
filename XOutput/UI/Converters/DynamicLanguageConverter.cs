@@ -26,7 +26,7 @@ namespace XOutput.UI.Converters
 			if (values[1] is Enum)
 			{
 				key = values[1].GetType().Name + "." + values[1].ToString();
-				return getTranslation(translations, key) ?? values[1].ToString();
+				return GetTranslation(translations, key) ?? values[1].ToString();
 			}
 			else if (values[1] is string)
 			{
@@ -44,7 +44,7 @@ namespace XOutput.UI.Converters
 			{
 				key = values[1] as string;
 			}
-			return getTranslation(translations, key) ?? key;
+			return GetTranslation(translations, key) ?? key;
 		}
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace XOutput.UI.Converters
 			throw new NotImplementedException();
 		}
 
-		protected string getTranslation(Dictionary<string, string> translations, string key)
+		protected string GetTranslation(Dictionary<string, string> translations, string key)
 		{
 			if (translations == null || key == null || !translations.ContainsKey(key))
 			{

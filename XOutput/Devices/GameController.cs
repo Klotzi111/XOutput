@@ -141,7 +141,7 @@ namespace XOutput.Devices
 			}
 			else
 			{
-				resetId();
+				ResetId();
 			}
 			return controllerCount;
 		}
@@ -162,7 +162,7 @@ namespace XOutput.Devices
 				}
 				xOutputInterface?.Unplug(controllerCount);
 				logger.Info($"Emulation stopped on {ToString()}.");
-				resetId();
+				ResetId();
 				thread?.Interrupt();
 			}
 		}
@@ -206,7 +206,7 @@ namespace XOutput.Devices
 			ForceFeedbackDevice?.SetForceFeedback((double)e.LargeMotor / byte.MaxValue, (double)e.SmallMotor / byte.MaxValue);
 		}
 
-		private void resetId()
+		private void ResetId()
 		{
 			if (controllerCount != 0)
 			{

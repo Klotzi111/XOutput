@@ -1,8 +1,8 @@
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace XOutput.Devices.XInput.SCPToolkit
 {
@@ -67,23 +67,23 @@ namespace XOutput.Devices.XInput.SCPToolkit
 
 			try
 			{
-				SP_DEVICE_INTERFACE_DATA DeviceInterfaceData = new SP_DEVICE_INTERFACE_DATA();
+				SP_DEVICE_INTERFACE_DATA deviceInterfaceData = new SP_DEVICE_INTERFACE_DATA();
 				SP_DEVICE_INTERFACE_DATA da = new SP_DEVICE_INTERFACE_DATA();
 				int bufferSize = 0, memberIndex = 0;
 
 				deviceInfoSet = SetupDiGetClassDevs(ref target, IntPtr.Zero, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
-				da.cbSize = Marshal.SizeOf(DeviceInterfaceData);
-				DeviceInterfaceData.cbSize = da.cbSize;
+				da.cbSize = Marshal.SizeOf(deviceInterfaceData);
+				deviceInterfaceData.cbSize = da.cbSize;
 
-				while (SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, ref target, memberIndex, ref DeviceInterfaceData))
+				while (SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, ref target, memberIndex, ref deviceInterfaceData))
 				{
-					SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref DeviceInterfaceData, IntPtr.Zero, 0, ref bufferSize, ref da);
+					SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref deviceInterfaceData, IntPtr.Zero, 0, ref bufferSize, ref da);
 					detailDataBuffer = Marshal.AllocHGlobal(bufferSize);
 
 					Marshal.WriteInt32(detailDataBuffer, (IntPtr.Size == 4) ? (4 + Marshal.SystemDefaultCharSize) : 8);
 
-					if (SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref DeviceInterfaceData, detailDataBuffer, bufferSize, ref bufferSize, ref da))
+					if (SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref deviceInterfaceData, detailDataBuffer, bufferSize, ref bufferSize, ref da))
 					{
 						IntPtr pDevicePathName = detailDataBuffer + 4;
 
@@ -132,9 +132,9 @@ namespace XOutput.Devices.XInput.SCPToolkit
 		private struct SP_DEVICE_INTERFACE_DATA
 		{
 			public int cbSize;
-			public Guid InterfaceClassGuid;
-			public int Flags;
-			public IntPtr Reserved;
+			public Guid interfaceClassGuid;
+			public int flags;
+			public IntPtr reserved;
 		}
 
 		private const uint FILE_ATTRIBUTE_NORMAL = 0x80;

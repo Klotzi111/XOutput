@@ -9,11 +9,10 @@ namespace XOutput.Devices.XInput
 	/// </summary>
 	public class XInputHelper
 	{
-		protected static readonly XInputHelper instance = new XInputHelper();
 		/// <summary>
-		/// Gets the singleton instance of the class.
+		/// The singleton instance of the class.
 		/// </summary>
-		public static XInputHelper Instance => instance;
+		public static readonly XInputHelper Instance = new XInputHelper();
 		/// <summary>
 		/// Gets the all values from the enum.
 		/// </summary>

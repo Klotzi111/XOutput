@@ -1,7 +1,7 @@
-using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Win32.SafeHandles;
 
 namespace XOutput.Devices.XInput.SCPToolkit
 {
@@ -71,7 +71,7 @@ namespace XOutput.Devices.XInput.SCPToolkit
 		public bool Plugin(int controllerCount)
 		{
 			byte[] buffer = new byte[8];
-			return sendToDevice(NativeMethods.MessageType.Plugin, controllerCount, buffer, null);
+			return SendToDevice(NativeMethods.MessageType.Plugin, controllerCount, buffer, null);
 		}
 
 		/// <summary>
@@ -82,13 +82,13 @@ namespace XOutput.Devices.XInput.SCPToolkit
 		public bool Unplug(int controllerCount)
 		{
 			byte[] buffer = new byte[8];
-			return sendToDevice(NativeMethods.MessageType.Unplug, controllerCount, buffer, null);
+			return SendToDevice(NativeMethods.MessageType.Unplug, controllerCount, buffer, null);
 		}
 
 		public bool UnplugAll()
 		{
 			byte[] buffer = new byte[8];
-			return sendToDevice(NativeMethods.MessageType.Unplug, null, buffer, null);
+			return SendToDevice(NativeMethods.MessageType.Unplug, null, buffer, null);
 		}
 
 		/// <summary>
@@ -99,10 +99,10 @@ namespace XOutput.Devices.XInput.SCPToolkit
 		/// <returns>If it was successful</returns>
 		public bool Report(int controllerCount, Dictionary<XInputTypes, double> values)
 		{
-			return sendToDevice(NativeMethods.MessageType.Report, controllerCount, GetBinaryData(values), null);
+			return SendToDevice(NativeMethods.MessageType.Report, controllerCount, GetBinaryData(values), null);
 		}
 
-		private bool sendToDevice(NativeMethods.MessageType type, int? controller, byte[] input, byte[] output)
+		private bool SendToDevice(NativeMethods.MessageType type, int? controller, byte[] input, byte[] output)
 		{
 			if (safeFileHandle.IsInvalid || safeFileHandle.IsClosed)
 			{
@@ -111,7 +111,6 @@ namespace XOutput.Devices.XInput.SCPToolkit
 
 			return NativeMethods.SendToDevice(safeFileHandle, type, controller, input, output);
 		}
-
 
 		/// <summary>
 		/// Gets binary data to report to scp device.
