@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
+using Nefarius.ViGEm.Client.Targets.DualShock4;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using XOutput.Logging;
 
@@ -35,14 +36,10 @@ namespace XOutput.Devices.XInput.Vigem
 		}
 
 		private readonly ViGEmClient client;
-		private readonly Dictionary<int, IXbox360Controller> controllers = new Dictionary<int, IXbox360Controller>();
-		private readonly Dictionary<XInputTypes, VigemXbox360ButtonMapping> buttonMappings = new Dictionary<XInputTypes, VigemXbox360ButtonMapping>();
-		private readonly Dictionary<XInputTypes, VigemXbox360AxisMapping> axisMappings = new Dictionary<XInputTypes, VigemXbox360AxisMapping>();
-		private readonly Dictionary<XInputTypes, VigemXbox360SliderMapping> sliderMappings = new Dictionary<XInputTypes, VigemXbox360SliderMapping>();
+		private readonly Dictionary<int, IVirtualGamepad> controllers = new();
 
 		public VigemDevice()
 		{
-			InitMapping();
 			client = new ViGEmClient();
 		}
 
@@ -62,7 +59,18 @@ namespace XOutput.Devices.XInput.Vigem
 		/// <returns>If it was successful</returns>
 		public bool Plugin(int controllerCount)
 		{
-			var controller = client.CreateXbox360Controller();
+			return Plugin(controllerCount, EmulatedControllerType.Xbox360);
+		}
+
+		/// <summary>
+		/// Adds a new controller to the system.
+		/// Because Vigem supports Xbox360 and DualShock4 controllers you can specify the type of the controller.
+		/// </summary>
+		/// <param name="controllerCount">number of controller</param>
+		/// <returns>If it was successful</returns>
+		public bool Plugin(int controllerCount, EmulatedControllerType type)
+		{
+			var controller = type.CreateController(client);
 			controller.Connect();
 			controllers.Add(controllerCount, controller);
 			return true;
@@ -85,6 +93,75 @@ namespace XOutput.Devices.XInput.Vigem
 			return false;
 		}
 
+		private void SetControllerValues(IVirtualGamepad controller, Dictionary<XInputTypes, double> values)
+		{
+			var mappingCollection = VigemMappingCollection.MappingCollectionLookup[controller.GetControllerType()];
+			// required for DualShock4 to set the DPad direction at the end
+			var dPadDirection = DPadDirection.None;
+
+			foreach (var valueEntry in values)
+			{
+				if (valueEntry.Key.IsAxis())
+				{
+					var mapping = mappingCollection.axisMappings[valueEntry.Key];
+					switch (controller)
+					{
+						case IXbox360Controller xbox360Controller:
+							var value = mapping.GetValueForXbox(valueEntry.Value);
+							xbox360Controller.SetAxisValue((Xbox360Axis)mapping.Type, value);
+							break;
+						case IDualShock4Controller dualShock4Controller:
+							var byteValue = mapping.GetValueForDS4(valueEntry.Value);
+							dualShock4Controller.SetAxisValue((DualShock4Axis)mapping.Type, byteValue);
+							break;
+					};
+				}
+				else if (valueEntry.Key.IsSlider())
+				{
+					var mapping = mappingCollection.sliderMappings[valueEntry.Key];
+					var value = mapping.GetValue(valueEntry.Value);
+					switch (controller)
+					{
+						case IXbox360Controller xbox360Controller:
+							xbox360Controller.SetSliderValue((Xbox360Slider)mapping.Type, value);
+							break;
+						case IDualShock4Controller dualShock4Controller:
+							dualShock4Controller.SetSliderValue((DualShock4Slider)mapping.Type, value);
+							break;
+					};
+				}
+				else
+				{
+					var mapping = mappingCollection.buttonMappings[valueEntry.Key];
+					var value = mapping.GetValue(valueEntry.Value);
+					switch (controller)
+					{
+						case IXbox360Controller xbox360Controller:
+							xbox360Controller.SetButtonState((Xbox360Button)mapping.Type, value);
+							break;
+						case IDualShock4Controller dualShock4Controller:
+							{
+								if (mapping is VigemDualShock4DPadDirectionButtonMapping dualShock4DPadMapping)
+								{
+									dPadDirection |= value ? dualShock4DPadMapping.DPadDirection : DPadDirection.None;
+								}
+								else
+								{
+									dualShock4Controller.SetButtonState((DualShock4Button)mapping.Type, value);
+								}
+								break;
+							}
+					};
+				}
+			}
+
+			// for DualShock4 set DPad direction at the end
+			if (controller is IDualShock4Controller dualShock4Controller2)
+			{
+				dualShock4Controller2.SetDPadDirection(VigemDualShock4Mappings.GetDualShock4DPadDirection(dPadDirection));
+			}
+		}
+
 		/// <summary>
 		/// Implements <see cref="IXOutputInterface.Report(int, Dictionary{XInputTypes, double})"/>
 		/// </summary>
@@ -96,24 +173,7 @@ namespace XOutput.Devices.XInput.Vigem
 			if (controllers.ContainsKey(controllerCount))
 			{
 				var controller = controllers[controllerCount];
-				foreach (var value in values)
-				{
-					if (value.Key.IsAxis())
-					{
-						var mapping = axisMappings[value.Key];
-						controller.SetAxisValue(mapping.Type, mapping.GetValue(value.Value));
-					}
-					else if (value.Key.IsSlider())
-					{
-						var mapping = sliderMappings[value.Key];
-						controller.SetSliderValue(mapping.Type, mapping.GetValue(value.Value));
-					}
-					else
-					{
-						var mapping = buttonMappings[value.Key];
-						controller.SetButtonState(mapping.Type, mapping.GetValue(value.Value));
-					}
-				}
+				SetControllerValues(controller, values);
 				return true;
 			}
 			return false;
@@ -128,36 +188,10 @@ namespace XOutput.Devices.XInput.Vigem
 			client.Dispose();
 		}
 
-		public IXbox360Controller GetController(int controllerCount)
+		public IVirtualGamepad GetController(int controllerCount)
 		{
 			return controllers[controllerCount];
 		}
 
-		private void InitMapping()
-		{
-			buttonMappings.Add(XInputTypes.A, new VigemXbox360ButtonMapping(Xbox360Button.A));
-			buttonMappings.Add(XInputTypes.B, new VigemXbox360ButtonMapping(Xbox360Button.B));
-			buttonMappings.Add(XInputTypes.X, new VigemXbox360ButtonMapping(Xbox360Button.X));
-			buttonMappings.Add(XInputTypes.Y, new VigemXbox360ButtonMapping(Xbox360Button.Y));
-			buttonMappings.Add(XInputTypes.L1, new VigemXbox360ButtonMapping(Xbox360Button.LeftShoulder));
-			buttonMappings.Add(XInputTypes.R1, new VigemXbox360ButtonMapping(Xbox360Button.RightShoulder));
-			buttonMappings.Add(XInputTypes.Back, new VigemXbox360ButtonMapping(Xbox360Button.Back));
-			buttonMappings.Add(XInputTypes.Start, new VigemXbox360ButtonMapping(Xbox360Button.Start));
-			buttonMappings.Add(XInputTypes.Home, new VigemXbox360ButtonMapping(Xbox360Button.Guide));
-			buttonMappings.Add(XInputTypes.R3, new VigemXbox360ButtonMapping(Xbox360Button.RightThumb));
-			buttonMappings.Add(XInputTypes.L3, new VigemXbox360ButtonMapping(Xbox360Button.LeftThumb));
-
-			buttonMappings.Add(XInputTypes.UP, new VigemXbox360ButtonMapping(Xbox360Button.Up));
-			buttonMappings.Add(XInputTypes.DOWN, new VigemXbox360ButtonMapping(Xbox360Button.Down));
-			buttonMappings.Add(XInputTypes.LEFT, new VigemXbox360ButtonMapping(Xbox360Button.Left));
-			buttonMappings.Add(XInputTypes.RIGHT, new VigemXbox360ButtonMapping(Xbox360Button.Right));
-
-			axisMappings.Add(XInputTypes.LX, new VigemXbox360AxisMapping(Xbox360Axis.LeftThumbX));
-			axisMappings.Add(XInputTypes.LY, new VigemXbox360AxisMapping(Xbox360Axis.LeftThumbY));
-			axisMappings.Add(XInputTypes.RX, new VigemXbox360AxisMapping(Xbox360Axis.RightThumbX));
-			axisMappings.Add(XInputTypes.RY, new VigemXbox360AxisMapping(Xbox360Axis.RightThumbY));
-			sliderMappings.Add(XInputTypes.L2, new VigemXbox360SliderMapping(Xbox360Slider.LeftTrigger));
-			sliderMappings.Add(XInputTypes.R2, new VigemXbox360SliderMapping(Xbox360Slider.RightTrigger));
-		}
 	}
 }

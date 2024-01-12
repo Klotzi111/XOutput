@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading;
+using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets;
 using XOutput.Devices.Input;
 using XOutput.Devices.Input.DirectInput;
 using XOutput.Devices.Mapper;
@@ -41,6 +43,10 @@ namespace XOutput.Devices
 		/// </summary>
 		public bool ForceFeedbackSupported => xOutputInterface is VigemDevice;
 		/// <summary>
+		/// Gets if using different controller types is supported.
+		/// </summary>
+		public bool ControllerTypeSupported => xOutputInterface is VigemDevice;
+		/// <summary>
 		/// Gets the force feedback device.
 		/// </summary>
 		public IInputDevice? ForceFeedbackDevice { get; set; }
@@ -54,7 +60,8 @@ namespace XOutput.Devices
 		private bool running;
 		private Action? afterStopAction;
 		private int controllerCount = 0;
-		private Nefarius.ViGEm.Client.Targets.IXbox360Controller? controller;
+		private IVirtualGamepad? controller;
+		private Delegate? controllerEventHandler = null;
 
 		public GameController(InputMapper mapper)
 		{
@@ -117,7 +124,7 @@ namespace XOutput.Devices
 			controllerCount = Controllers.Instance.GetId();
 			if (controller != null)
 			{
-				controller.FeedbackReceived -= ControllerFeedbackReceived;
+				RemoveControllerEventHandlers();
 			}
 			if (xOutputInterface == null)
 			{
@@ -128,7 +135,17 @@ namespace XOutput.Devices
 				// Wait for unplugging
 				Thread.Sleep(10);
 			}
-			if (xOutputInterface.Plugin(controllerCount))
+
+			var pluginResult = false;
+			if (xOutputInterface is VigemDevice vigem)
+			{
+				pluginResult = vigem.Plugin(controllerCount, EmulatedControllerType.DualShock4);
+			}
+			else
+			{
+				pluginResult = xOutputInterface.Plugin(controllerCount);
+			}
+			if (pluginResult)
 			{
 				XInput.InputChanged += XInputInputChanged;
 				this.afterStopAction = afterStopAction;
@@ -139,7 +156,16 @@ namespace XOutput.Devices
 				{
 					logger.Info($"Force feedback mapping is connected on {ToString()}.");
 					controller = ((VigemDevice)xOutputInterface).GetController(controllerCount);
-					controller.FeedbackReceived += ControllerFeedbackReceived;
+					if (controller is IXbox360Controller xbox360Controller)
+					{
+						xbox360Controller.FeedbackReceived += ControllerFeedbackReceivedXboxOne;
+						controllerEventHandler = (Xbox360FeedbackReceivedEventHandler)ControllerFeedbackReceivedXboxOne;
+					}
+					else if (controller is IDualShock4Controller dualShock4Controller)
+					{
+						dualShock4Controller.FeedbackReceived += ControllerFeedbackReceivedDualShock4;
+						controllerEventHandler = (DualShock4FeedbackReceivedEventHandler)ControllerFeedbackReceivedDualShock4;
+					}
 				}
 			}
 			else
@@ -147,6 +173,22 @@ namespace XOutput.Devices
 				ResetId();
 			}
 			return controllerCount;
+		}
+
+		private void RemoveControllerEventHandlers()
+		{
+			if (controllerEventHandler != null)
+			{
+				if (controller is IXbox360Controller xbox360Controller)
+				{
+					xbox360Controller.FeedbackReceived -= (Xbox360FeedbackReceivedEventHandler)controllerEventHandler;
+				}
+				else if (controller is IDualShock4Controller dualShock4Controller)
+				{
+					dualShock4Controller.FeedbackReceived -= (DualShock4FeedbackReceivedEventHandler)controllerEventHandler;
+				}
+			}
+			controllerEventHandler = null;
 		}
 
 		/// <summary>
@@ -161,7 +203,8 @@ namespace XOutput.Devices
 
 				if (ForceFeedbackSupported && controller != null)
 				{
-					controller.FeedbackReceived -= ControllerFeedbackReceived;
+					RemoveControllerEventHandlers();
+
 					logger.Info($"Force feedback mapping is disconnected on {ToString()}.");
 				}
 				xOutputInterface?.Unplug(controllerCount);
@@ -186,7 +229,12 @@ namespace XOutput.Devices
 			}
 		}
 
-		private void ControllerFeedbackReceived(object sender, Nefarius.ViGEm.Client.Targets.Xbox360.Xbox360FeedbackReceivedEventArgs e)
+		private void ControllerFeedbackReceivedXboxOne(object sender, Nefarius.ViGEm.Client.Targets.Xbox360.Xbox360FeedbackReceivedEventArgs e)
+		{
+			ForceFeedbackDevice?.SetForceFeedback((double)e.LargeMotor / byte.MaxValue, (double)e.SmallMotor / byte.MaxValue);
+		}
+
+		private void ControllerFeedbackReceivedDualShock4(object sender, Nefarius.ViGEm.Client.Targets.DualShock4.DualShock4FeedbackReceivedEventArgs e)
 		{
 			ForceFeedbackDevice?.SetForceFeedback((double)e.LargeMotor / byte.MaxValue, (double)e.SmallMotor / byte.MaxValue);
 		}

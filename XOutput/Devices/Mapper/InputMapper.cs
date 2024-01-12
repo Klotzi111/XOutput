@@ -26,6 +26,11 @@ namespace XOutput.Devices.Mapper
 		/// Id of the force feedback device.
 		/// </summary>
 		public string? ForceFeedbackDevice { get; set; }
+		/// <summary>
+		/// The type of the controller to be emulated.
+		/// NOTE: This is only used by ViGEm.
+		/// </summary>
+		public EmulatedControllerType ControllerType { get; set; } = EmulatedControllerType.Xbox360;
 
 		public Dictionary<XInputTypes, MapperDataCollection> Mappings { get; set; }
 
