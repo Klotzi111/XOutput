@@ -70,7 +70,9 @@ namespace XOutput
 					{
 						mainWindow.Show();
 					}
-					ApplicationContext.Global.Resolve<Devices.Input.Mouse.MouseHook>().StartHook();
+
+					// start a forms application to handle global mouse and keyboard hooks with "MouseKeyHook" library
+					System.Windows.Forms.Application.Run(new System.Windows.Forms.ApplicationContext());
 				}
 				catch (Exception ex)
 				{

@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using XOutput.Tools;
+using Gma.System.MouseKeyHook;
 
 namespace XOutput.Devices.Input.Mouse
 {
@@ -14,14 +14,18 @@ namespace XOutput.Devices.Input.Mouse
 		public MouseSource(IInputDevice inputDevice, string name, MouseButton key) : base(inputDevice, name, InputSourceTypes.Button, (int)key)
 		{
 			this.key = key;
-			ApplicationContext.Global.Resolve<MouseHook>().MouseEvent += MouseEventHandler;
+			GlobalInputEventHelper.GlobalInputEventManager.MouseDownExt += MouseEventHandler;
+			GlobalInputEventHelper.GlobalInputEventManager.MouseUpExt += MouseEventHandler;
 		}
 
-		private void MouseEventHandler(MouseHookEventArgs args)
+		private void MouseEventHandler(object? sender, MouseEventExtArgs args)
 		{
-			if (args.Button == key)
+			if (args.Button.ToWPFMouseButton() == key)
 			{
-				state = args.State == MouseButtonState.Pressed ? 1 : 0;
+				if (args.IsMouseButtonUp != args.IsMouseButtonDown)
+				{
+					state = args.IsMouseButtonDown ? 1 : 0;
+				} // else: What? The button is up and down at the same time?!
 			}
 		}
 
