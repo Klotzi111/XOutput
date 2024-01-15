@@ -188,7 +188,11 @@ namespace XOutput.Devices
 			}
 			catch (ThreadInterruptedException)
 			{
-
+				logger.Info($"{Thread.CurrentThread.Name} received {nameof(ThreadInterruptedException)}");
+			}
+			catch (Exception e)
+			{
+				logger.Error($"{Thread.CurrentThread.Name} received unexpected Exception.\n{e}");
 			}
 			finally
 			{

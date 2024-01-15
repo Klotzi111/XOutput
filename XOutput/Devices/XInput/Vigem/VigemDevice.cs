@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Nefarius.ViGEm.Client;
-using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using XOutput.Logging;
@@ -39,12 +37,9 @@ namespace XOutput.Devices.XInput.Vigem
 				new ViGEmClient().Dispose();
 				return true;
 			}
-			catch (VigemBusNotFoundException)
+			catch
 			{
-				return false;
-			}
-			catch (DllNotFoundException)
-			{
+				// all kind of exceptions mean that ViGEm is not available (or at least not useable)
 				return false;
 			}
 		}
