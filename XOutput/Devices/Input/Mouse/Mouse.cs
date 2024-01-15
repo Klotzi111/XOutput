@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Input;
-using XOutput.UI;
 
 namespace XOutput.Devices.Input.Mouse
 {
@@ -103,7 +102,13 @@ namespace XOutput.Devices.Input.Mouse
 		public void Dispose()
 		{
 			Disconnected?.Invoke(this, new DeviceDisconnectedEventArgs());
+			foreach (var source in sources)
+			{
+				source.Dispose();
+			}
 			inputRefresher.Interrupt();
+
+			GC.SuppressFinalize(this);
 		}
 
 		/// <summary>
@@ -164,16 +169,13 @@ namespace XOutput.Devices.Input.Mouse
 		public bool RefreshInput(bool force = false)
 		{
 			state.ResetChanges();
-			App.Current.Dispatcher.Invoke(() =>
+			foreach (var source in sources)
 			{
-				foreach (var source in sources)
+				if (source.Refresh())
 				{
-					if (source.Refresh())
-					{
-						state.MarkChanged(source);
-					}
+					state.MarkChanged(source);
 				}
-			});
+			}
 			var changes = state.GetChanges(force);
 			if (changes.Any())
 			{

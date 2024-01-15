@@ -1,3 +1,4 @@
+using System;
 using XOutput.Devices.Input;
 using XOutput.Devices.XInput;
 
@@ -6,7 +7,7 @@ namespace XOutput.Devices
 	/// <summary>
 	/// Main class for sources.
 	/// </summary>
-	public abstract class InputSource
+	public abstract class InputSource : IDisposable
 	{
 		/// <summary>
 		/// This event is invoked if the data from the source was updated.
@@ -83,6 +84,17 @@ namespace XOutput.Devices
 				return inputDevice.Get(this);
 			}
 			return type.GetDisableValue();
+		}
+
+		// this class has nothing to dispose but subclasses may override this method
+		protected virtual void Dispose(bool disposing)
+		{
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 	}
 

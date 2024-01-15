@@ -18,6 +18,22 @@ namespace XOutput.Devices.Input.Mouse
 			GlobalInputEventHelper.GlobalInputEventManager.MouseUpExt += MouseEventHandler;
 		}
 
+		~MouseSource()
+		{
+			Dispose(false);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			// we always want to remove the handlers because either the object is to be disposed or the object is to be finalized
+			// trying to remove if the handlers are not contained will not cause any harm
+			GlobalInputEventHelper.GlobalInputEventManager.MouseDownExt -= MouseEventHandler;
+			GlobalInputEventHelper.GlobalInputEventManager.MouseUpExt -= MouseEventHandler;
+
+			// because from now on the state will never change we also set the state to 0
+			state = 0;
+		}
+
 		private void MouseEventHandler(object? sender, MouseEventExtArgs args)
 		{
 			if (args.Button.ToWPFMouseButton() == key)
@@ -33,5 +49,6 @@ namespace XOutput.Devices.Input.Mouse
 		{
 			return RefreshValue(state);
 		}
+
 	}
 }
