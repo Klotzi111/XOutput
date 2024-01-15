@@ -50,8 +50,9 @@ namespace XOutput.Devices
 		private readonly InputMapper mapper;
 		private readonly XOutputDevice xInput;
 		private readonly IXOutputInterface? xOutputInterface;
-		private Thread? thread;
+
 		private bool running;
+		private Action? afterStopAction;
 		private int controllerCount = 0;
 		private Nefarius.ViGEm.Client.Targets.IXbox360Controller? controller;
 
@@ -68,7 +69,6 @@ namespace XOutput.Devices
 					ForceFeedbackDevice = device;
 				}
 			}
-			running = false;
 		}
 
 		private IXOutputInterface? CreateXOutput()
@@ -108,7 +108,7 @@ namespace XOutput.Devices
 		/// <summary>
 		/// Starts the emulation of the device
 		/// </summary>
-		public int Start(Action? onStop = null)
+		public int Start(Action? afterStopAction = null)
 		{
 			if (!HasXOutputInstalled)
 			{
@@ -130,11 +130,10 @@ namespace XOutput.Devices
 			}
 			if (xOutputInterface.Plugin(controllerCount))
 			{
-				thread = new Thread(() => ReadAndReportValues(onStop));
+				XInput.InputChanged += XInputInputChanged;
+				this.afterStopAction = afterStopAction;
 				running = true;
-				thread.Name = $"Emulated controller {controllerCount} output refresher";
-				thread.IsBackground = true;
-				thread.Start();
+
 				logger.Info($"Emulation started on {ToString()}.");
 				if (ForceFeedbackSupported)
 				{
@@ -159,46 +158,24 @@ namespace XOutput.Devices
 			{
 				running = false;
 				XInput.InputChanged -= XInputInputChanged;
+
 				if (ForceFeedbackSupported && controller != null)
 				{
 					controller.FeedbackReceived -= ControllerFeedbackReceived;
 					logger.Info($"Force feedback mapping is disconnected on {ToString()}.");
 				}
 				xOutputInterface?.Unplug(controllerCount);
+
 				logger.Info($"Emulation stopped on {ToString()}.");
 				ResetId();
-				thread?.Interrupt();
+				afterStopAction?.Invoke();
+				afterStopAction = null;
 			}
 		}
 
 		public override string ToString()
 		{
 			return DisplayName;
-		}
-
-		private void ReadAndReportValues(Action? onStop)
-		{
-			try
-			{
-				XInput.InputChanged += XInputInputChanged;
-				while (running)
-				{
-					Thread.Sleep(100);
-				}
-			}
-			catch (ThreadInterruptedException)
-			{
-				logger.Info($"{Thread.CurrentThread.Name} received {nameof(ThreadInterruptedException)}");
-			}
-			catch (Exception e)
-			{
-				logger.Error($"{Thread.CurrentThread.Name} received unexpected Exception.\n{e}");
-			}
-			finally
-			{
-				onStop?.Invoke();
-				Stop();
-			}
 		}
 
 		private void XInputInputChanged(object sender, DeviceInputChangedEventArgs e)

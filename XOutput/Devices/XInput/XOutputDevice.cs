@@ -64,26 +64,28 @@ namespace XOutput.Devices.XInput
 			Dispose();
 		}
 
-		public void UpdateSources(IEnumerable<IInputDevice> sources)
+		public void Dispose()
+		{
+			RemoveInputChangedEventHandlers();
+		}
+
+		private void RemoveInputChangedEventHandlers()
 		{
 			foreach (var source in boundSources)
 			{
 				source.InputChanged -= SourceInputChanged;
 			}
+		}
+
+		public void UpdateSources(IEnumerable<IInputDevice> sources)
+		{
+			RemoveInputChangedEventHandlers();
 			boundSources = sources;
 			foreach (var source in boundSources)
 			{
 				source.InputChanged += SourceInputChanged;
 			}
 			RefreshInput(true);
-		}
-
-		public void Dispose()
-		{
-			foreach (var source in boundSources)
-			{
-				source.InputChanged -= SourceInputChanged;
-			}
 		}
 
 		/// <summary>
