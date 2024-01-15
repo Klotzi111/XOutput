@@ -203,7 +203,7 @@ namespace XOutput.Devices
 
 		private void XInputInputChanged(object sender, DeviceInputChangedEventArgs e)
 		{
-			if (xOutputInterface?.Report(controllerCount, XInput.GetValues()) == true)
+			if (xOutputInterface?.Report(controllerCount, XInput.GetValues()) == false)
 			{
 				Stop();
 			}
