@@ -45,7 +45,7 @@ namespace XOutput
 			singleInstanceProvider = new SingleInstanceProvider();
 			argumentParser = globalContext.Resolve<ArgumentParser>();
 #if !DEBUG
-            Dispatcher.UnhandledException += async (object sender, DispatcherUnhandledExceptionEventArgs e) => await UnhandledException(e.Exception);
+			Dispatcher.UnhandledException += async (object sender, DispatcherUnhandledExceptionEventArgs e) => await UnhandledException(e.Exception);
 #endif
 		}
 
@@ -70,9 +70,6 @@ namespace XOutput
 					{
 						mainWindow.Show();
 					}
-
-					// start a forms application to handle global mouse and keyboard hooks with "MouseKeyHook" library
-					System.Windows.Forms.Application.Run(new System.Windows.Forms.ApplicationContext());
 				}
 				catch (Exception ex)
 				{
