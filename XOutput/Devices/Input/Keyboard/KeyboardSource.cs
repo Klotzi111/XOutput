@@ -1,11 +1,12 @@
 using System.Windows.Input;
+using XOutput.Devices.Input.Virtual;
 
 namespace XOutput.Devices.Input.Keyboard
 {
 	/// <summary>
 	/// Direct input source.
 	/// </summary>
-	public class KeyboardSource : InputSource
+	public class KeyboardSource : InputSource, IBasicVirtualInputSource
 	{
 		private readonly Key key;
 
@@ -19,5 +20,7 @@ namespace XOutput.Devices.Input.Keyboard
 			double newValue = System.Windows.Input.Keyboard.IsKeyDown(key) ? 1 : 0;
 			return RefreshValue(newValue);
 		}
+
+		bool IBasicVirtualInputSource.Refresh() => Refresh();
 	}
 }

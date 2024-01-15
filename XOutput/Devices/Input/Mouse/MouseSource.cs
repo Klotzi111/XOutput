@@ -1,12 +1,13 @@
 using System.Windows.Input;
 using Gma.System.MouseKeyHook;
+using XOutput.Devices.Input.Virtual;
 
 namespace XOutput.Devices.Input.Mouse
 {
 	/// <summary>
 	/// Direct input source.
 	/// </summary>
-	public class MouseSource : InputSource
+	public class MouseSource : InputSource, IBasicVirtualInputSource
 	{
 		private readonly MouseButton key;
 		private double state = 0;
@@ -50,5 +51,6 @@ namespace XOutput.Devices.Input.Mouse
 			return RefreshValue(state);
 		}
 
+		bool IBasicVirtualInputSource.Refresh() => Refresh();
 	}
 }
