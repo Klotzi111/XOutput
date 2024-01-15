@@ -27,9 +27,13 @@ namespace XOutput.UI.Component
 
 		public void Edit()
 		{
-			var controllerSettingsWindow = new ControllerSettingsWindow(new ControllerSettingsViewModel(new ControllerSettingsModel(), Model.Controller, isAdmin), Model.Controller);
-			controllerSettingsWindow.ShowDialog();
-			Model.RefreshName();
+			var controller = Model.Controller;
+			if (controller != null)
+			{
+				var controllerSettingsWindow = new ControllerSettingsWindow(new ControllerSettingsViewModel(new ControllerSettingsModel(), controller, isAdmin), controller);
+				controllerSettingsWindow.ShowDialog();
+				Model.RefreshName();
+			}
 		}
 
 		public void StartStop()
@@ -40,7 +44,7 @@ namespace XOutput.UI.Component
 			}
 			else
 			{
-				Model.Controller.Stop();
+				Model.Controller?.Stop();
 			}
 		}
 
@@ -49,16 +53,20 @@ namespace XOutput.UI.Component
 			if (!Model.Started)
 			{
 				int controllerCount = 0;
-				controllerCount = Model.Controller.Start(() =>
+				var controller = Model.Controller;
+				if (controller != null)
 				{
-					Model.ButtonText = "Start";
-					log?.Invoke(string.Format(LanguageModel.Instance.Translate("EmulationStopped"), Model.Controller.DisplayName));
-					Model.Started = false;
-				});
-				if (controllerCount != 0)
-				{
-					Model.ButtonText = "Stop";
-					log?.Invoke(string.Format(LanguageModel.Instance.Translate("EmulationStarted"), Model.Controller.DisplayName, controllerCount));
+					controllerCount = controller.Start(() =>
+					{
+						Model.ButtonText = "Start";
+						log?.Invoke(string.Format(LanguageModel.Instance.Translate("EmulationStopped"), controller.DisplayName));
+						Model.Started = false;
+					});
+					if (controllerCount != 0)
+					{
+						Model.ButtonText = "Stop";
+						log?.Invoke(string.Format(LanguageModel.Instance.Translate("EmulationStarted"), controller.DisplayName, controllerCount));
+					}
 				}
 				Model.Started = controllerCount != 0;
 			}
@@ -67,7 +75,11 @@ namespace XOutput.UI.Component
 		public void Dispose()
 		{
 			timer.Tick -= Timer_Tick;
-			Model.Controller.XInput.InputChanged -= InputDevice_InputChanged;
+			var controller = Model.Controller;
+			if (controller != null)
+			{
+				controller.XInput.InputChanged -= InputDevice_InputChanged;
+			}
 		}
 
 		private void Timer_Tick(object? sender, EventArgs e)

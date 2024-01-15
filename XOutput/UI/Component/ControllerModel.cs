@@ -5,9 +5,8 @@ namespace XOutput.UI.Component
 {
 	public class ControllerModel : ModelBase
 	{
-		// assign fallback so we can ensure that the controller is never null
-		private GameController controller = new GameController(new Devices.Mapper.InputMapper("FAKE_NAME", "FAKE_ID"));
-		public GameController Controller
+		private GameController? controller;
+		public GameController? Controller
 		{
 			get => controller;
 			set
@@ -77,7 +76,7 @@ namespace XOutput.UI.Component
 			}
 		}
 
-		public string DisplayName => Controller.ToString();
+		public string DisplayName => Controller?.ToString() ?? "No Controller";
 
 		public void RefreshName()
 		{
