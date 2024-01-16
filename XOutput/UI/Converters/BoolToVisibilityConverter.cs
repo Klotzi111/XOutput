@@ -21,7 +21,7 @@ namespace XOutput.UI.Converters
 		/// <returns></returns>
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			bool x = value as bool? == true;
+			bool x = (value as bool?) == true;
 			if ((parameter as bool?) == true)
 			{
 				x = !x;
