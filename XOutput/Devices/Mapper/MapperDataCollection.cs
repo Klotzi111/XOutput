@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using XOutput.Devices.XInput;
 
 namespace XOutput.Devices.Mapper
@@ -54,10 +53,17 @@ namespace XOutput.Devices.Mapper
 		/// <returns>Mapped value</returns>
 		public double GetValue(XInputTypes type)
 		{
-			return Mappers
-				.Where(m => m.Source != null)
-				.Select(m => m.GetValue(m.Source.Get(type)))
-				.Aggregate(centerPoint, (acc, v) => acc + DiffFromCenter(v));
+			// has less object allocations than LINQ
+			var val = centerPoint;
+			foreach (var mapper in Mappers)
+			{
+				if (mapper.Source != null)
+				{
+					var v = mapper.GetValue(mapper.Source.Get(type));
+					val += DiffFromCenter(v);
+				}
+			}
+			return val;
 		}
 
 		private double DiffFromCenter(double value)

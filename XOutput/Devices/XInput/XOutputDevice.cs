@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using XOutput.Devices.Input;
@@ -155,17 +154,19 @@ namespace XOutput.Devices.XInput
 		}
 
 		/// <summary>
-		/// Gets the current state of the inputTpye.
-		/// <para>Implements <see cref="IDevice.Get(Enum)"/></para>
+		/// Gets the current state of the inputType.
 		/// </summary>
 		/// <param name="inputType">Type of input</param>
 		/// <returns>Value</returns>
-		public double Get(Enum inputType)
+		public double Get(XInputTypes inputType)
 		{
-			XInputTypes? type = inputType as XInputTypes?;
-			if (type.HasValue)
+			// has let object allocations than IEnumerable.First()
+			foreach (var e in sources)
 			{
-				return sources.First(s => s.XInputType == type.Value).Value;
+				if (e.XInputType == inputType)
+				{
+					return e.Value;
+				}
 			}
 			return 0;
 		}
