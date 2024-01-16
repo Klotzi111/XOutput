@@ -128,16 +128,25 @@ namespace XOutput.Devices.Input.DirectInput
 			var buttons = buttonObjectInstances.Select((b, i) => new DirectInputSource(this, "Button " + b.Usage, InputSourceTypes.Button, b.Offset, state => state.Buttons[i] ? 1 : 0)).ToArray();
 			var axes = GetAxes().OrderBy(a => a.Usage).Take(24).Select(GetAxisSource);
 			var sliders = GetSliders().OrderBy(a => a.Usage).Select(GetSliderSource);
-			IEnumerable<DirectInputSource> dpads = new DirectInputSource[0];
-			if (joystick.Capabilities.PovCount > 0)
+			DirectInputSource[] dpads;
+			var povCount = joystick.Capabilities.PovCount;
+			if (povCount > 0)
 			{
-				dpads = Enumerable.Range(0, joystick.Capabilities.PovCount)
-					.SelectMany(i => new DirectInputSource[] {
-						new DirectInputSource(this, "DPad" + (i + 1) + " Up", InputSourceTypes.Dpad, 1000 + (i * 4), state => GetDPadValue(i).HasFlag(DPadDirection.Up) ? 1 : 0),
-						new DirectInputSource(this, "DPad" + (i + 1) + " Down", InputSourceTypes.Dpad, 1001 + (i * 4), state => GetDPadValue(i).HasFlag(DPadDirection.Down) ? 1 : 0),
-						new DirectInputSource(this, "DPad" + (i + 1) + " Left", InputSourceTypes.Dpad, 1002 + (i * 4), state => GetDPadValue(i).HasFlag(DPadDirection.Left) ? 1 : 0),
-						new DirectInputSource(this, "DPad" + (i + 1) + " Right", InputSourceTypes.Dpad, 1003 + (i * 4), state => GetDPadValue(i).HasFlag(DPadDirection.Right) ? 1 : 0),
-					});
+				dpads = new DirectInputSource[povCount * 4];
+				for (var i = 0; i < povCount; i++)
+				{
+					var offset = i * 4;
+					// this field is required because otherwise the lambda will use a reference to the variable i and therefore will always be wrong
+					var localCopyOfI = i;
+					dpads[offset + 0] = new DirectInputSource(this, "DPad" + (i + 1) + " Up", InputSourceTypes.Dpad, 1000 + offset, state => GetDPadValue(localCopyOfI, state).HasFlag(DPadDirection.Up) ? 1 : 0);
+					dpads[offset + 1] = new DirectInputSource(this, "DPad" + (i + 1) + " Down", InputSourceTypes.Dpad, 1001 + offset, state => GetDPadValue(localCopyOfI, state).HasFlag(DPadDirection.Down) ? 1 : 0);
+					dpads[offset + 2] = new DirectInputSource(this, "DPad" + (i + 1) + " Left", InputSourceTypes.Dpad, 1002 + offset, state => GetDPadValue(localCopyOfI, state).HasFlag(DPadDirection.Left) ? 1 : 0);
+					dpads[offset + 3] = new DirectInputSource(this, "DPad" + (i + 1) + " Right", InputSourceTypes.Dpad, 1003 + offset, state => GetDPadValue(localCopyOfI, state).HasFlag(DPadDirection.Right) ? 1 : 0);
+				}
+			}
+			else
+			{
+				dpads = Array.Empty<DirectInputSource>();
 			}
 			sources = buttons.Concat(axes).Concat(sliders).Concat(dpads).ToArray();
 
@@ -298,13 +307,15 @@ namespace XOutput.Devices.Input.DirectInput
 				try
 				{
 					joystick.Poll();
+					// get state only once for updating all sources
+					var currentState = GetCurrentState();
 					for (int i = 0; i < state.DPads.Count(); i++)
 					{
-						state.SetDPad(i, GetDPadValue(i));
+						state.SetDPad(i, GetDPadValue(i, currentState));
 					}
 					foreach (var source in sources)
 					{
-						if (source.Refresh(GetCurrentState()))
+						if (source.Refresh(currentState))
 						{
 							state.MarkChanged(source);
 						}
@@ -332,9 +343,8 @@ namespace XOutput.Devices.Input.DirectInput
 		/// </summary>
 		/// <param name="axis">Axis index</param>
 		/// <returns>Value</returns>
-		private int GetAxisValue(int instanceNumber)
+		private int GetAxisValue(int instanceNumber, JoystickState state)
 		{
-			var currentState = GetCurrentState();
 			if (instanceNumber < 0)
 			{
 				throw new ArgumentException(nameof(instanceNumber));
@@ -342,53 +352,53 @@ namespace XOutput.Devices.Input.DirectInput
 			switch (instanceNumber)
 			{
 				case 0:
-					return currentState.X;
+					return state.X;
 				case 1:
-					return ushort.MaxValue - currentState.Y;
+					return ushort.MaxValue - state.Y;
 				case 2:
-					return currentState.Z;
+					return state.Z;
 				case 3:
-					return currentState.RotationX;
+					return state.RotationX;
 				case 4:
-					return ushort.MaxValue - currentState.RotationY;
+					return ushort.MaxValue - state.RotationY;
 				case 5:
-					return currentState.RotationZ;
+					return state.RotationZ;
 				case 6:
-					return currentState.AccelerationX;
+					return state.AccelerationX;
 				case 7:
-					return ushort.MaxValue - currentState.AccelerationY;
+					return ushort.MaxValue - state.AccelerationY;
 				case 8:
-					return currentState.AccelerationZ;
+					return state.AccelerationZ;
 				case 9:
-					return currentState.AngularAccelerationX;
+					return state.AngularAccelerationX;
 				case 10:
-					return ushort.MaxValue - currentState.AngularAccelerationY;
+					return ushort.MaxValue - state.AngularAccelerationY;
 				case 11:
-					return currentState.AngularAccelerationZ;
+					return state.AngularAccelerationZ;
 				case 12:
-					return currentState.ForceX;
+					return state.ForceX;
 				case 13:
-					return ushort.MaxValue - currentState.ForceY;
+					return ushort.MaxValue - state.ForceY;
 				case 14:
-					return currentState.ForceZ;
+					return state.ForceZ;
 				case 15:
-					return currentState.TorqueX;
+					return state.TorqueX;
 				case 16:
-					return ushort.MaxValue - currentState.TorqueY;
+					return ushort.MaxValue - state.TorqueY;
 				case 17:
-					return currentState.TorqueZ;
+					return state.TorqueZ;
 				case 18:
-					return currentState.VelocityX;
+					return state.VelocityX;
 				case 19:
-					return ushort.MaxValue - currentState.VelocityY;
+					return ushort.MaxValue - state.VelocityY;
 				case 20:
-					return currentState.VelocityZ;
+					return state.VelocityZ;
 				case 21:
-					return currentState.AngularVelocityX;
+					return state.AngularVelocityX;
 				case 22:
-					return ushort.MaxValue - currentState.AngularVelocityY;
+					return ushort.MaxValue - state.AngularVelocityY;
 				case 23:
-					return currentState.AngularVelocityZ;
+					return state.AngularVelocityZ;
 				default:
 					return 0;
 			}
@@ -399,14 +409,13 @@ namespace XOutput.Devices.Input.DirectInput
 		/// </summary>
 		/// <param name="slider">Slider index</param>
 		/// <returns>Value</returns>
-		private int GetSliderValue(int slider)
+		private int GetSliderValue(int slider, JoystickState state)
 		{
-			var currentState = GetCurrentState();
 			if (slider < 1)
 			{
 				throw new ArgumentException(nameof(slider));
 			}
-			return currentState.Sliders[slider - 1];
+			return state.Sliders[slider - 1];
 		}
 
 		/// <summary>
@@ -414,10 +423,9 @@ namespace XOutput.Devices.Input.DirectInput
 		/// </summary>
 		/// <param name="dpad">DPad index</param>
 		/// <returns>Value</returns>
-		private DPadDirection GetDPadValue(int dpad)
+		private DPadDirection GetDPadValue(int dpad, JoystickState state)
 		{
-			JoystickState currentState = GetCurrentState();
-			switch (currentState.PointOfViewControllers[dpad])
+			switch (state.PointOfViewControllers[dpad])
 			{
 				case -1: return DPadDirection.None;
 				case 0: return DPadDirection.Up;
@@ -474,7 +482,11 @@ namespace XOutput.Devices.Input.DirectInput
 		{
 			try
 			{
-				return joystick.GetCurrentState();
+				// creating the instance ourselves reduces the performance overhead of Activator.CreateInstance
+				// because this method is called very often it helps a lot
+				var state = new JoystickState();
+				joystick.GetCurrentState(ref state);
+				return state;
 			}
 			catch (Exception)
 			{
@@ -508,13 +520,13 @@ namespace XOutput.Devices.Input.DirectInput
 				axisCount = instance.ObjectId.InstanceNumber;
 			}
 			string name = instance.Name;
-			return new DirectInputSource(this, name, type, instance.Offset, state => GetAxisValue(axisCount) / (double)ushort.MaxValue);
+			return new DirectInputSource(this, name, type, instance.Offset, state => GetAxisValue(axisCount, state) / (double)ushort.MaxValue);
 		}
 
 		private DirectInputSource GetSliderSource(DeviceObjectInstance instance, int i)
 		{
 			string name = instance.Name;
-			return new DirectInputSource(this, name, InputSourceTypes.Slider, instance.Offset, state => GetSliderValue(i + 1) / (double)ushort.MaxValue);
+			return new DirectInputSource(this, name, InputSourceTypes.Slider, instance.Offset, state => GetSliderValue(i + 1, state) / (double)ushort.MaxValue);
 		}
 	}
 }
