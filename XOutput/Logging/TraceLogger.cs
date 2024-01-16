@@ -52,7 +52,7 @@ namespace XOutput.Logging
 
 		private void DoLog(LogLevel loglevel, string? methodName, string log)
 		{
-			System.Diagnostics.Trace.WriteLine(CreatePrefix(DateTime.Now, loglevel, LoggerType.FullName, methodName) + log);
+			System.Diagnostics.Trace.WriteLine(CreateLogEntryMessage(DateTime.Now, loglevel, LoggerType.FullName, methodName, log));
 		}
 	}
 }

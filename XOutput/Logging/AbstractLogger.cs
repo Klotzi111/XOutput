@@ -1,6 +1,5 @@
 using System;
-using System.Diagnostics;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace XOutput.Logging
@@ -21,91 +20,69 @@ namespace XOutput.Logging
 			this.level = level;
 		}
 
-		protected string? GetCallerMethodName()
+		protected string CreateLogEntryMessage(DateTime time, LogLevel loglevel, string? classname, string? methodname, string message)
 		{
-			MethodBase? method = new StackTrace().GetFrame(2)?.GetMethod();
-			if (method == null)
-			{
-				return null;
-			}
-
-			var declaringType = method.DeclaringType;
-			bool asyncFunction = declaringType == null ? false : (declaringType.Name.Contains("<") && declaringType.Name.Contains(">"));
-			if (asyncFunction)
-			{
-				int openIndex = declaringType!.Name.IndexOf("<");
-				int closeIndex = declaringType!.Name.IndexOf(">");
-				return declaringType!.Name.Substring(openIndex + 1, closeIndex - openIndex - 1);
-			}
-			else
-			{
-				return method.Name;
-			}
+			return $"{time.ToString("yyyy-MM-dd HH\\:mm\\:ss.fff zzz")} {loglevel.Text} {classname}.{methodname}: {message}";
 		}
 
-		protected string CreatePrefix(DateTime time, LogLevel loglevel, string? classname, string? methodname)
+		public Task Trace(string log, [CallerMemberName] string? methodName = null)
 		{
-			return $"{time.ToString("yyyy-MM-dd HH\\:mm\\:ss.fff zzz")} {loglevel.Text} {classname}.{methodname}: ";
+			return LogCheck(LogLevel.Trace, methodName, log);
 		}
 
-		public Task Trace(string log)
+		public Task Trace(Func<string> log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Trace, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Trace, methodName, log);
 		}
 
-		public Task Trace(Func<string> log)
+		public Task Debug(string log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Trace, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Debug, methodName, log);
 		}
 
-		public Task Debug(string log)
+		public Task Debug(Func<string> log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Debug, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Debug, methodName, log);
 		}
 
-		public Task Debug(Func<string> log)
+		public Task Info(string log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Debug, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Info, methodName, log);
 		}
 
-		public Task Info(string log)
+		public Task Info(Func<string> log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Info, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Info, methodName, log);
 		}
 
-		public Task Info(Func<string> log)
+		public Task Warning(string log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Info, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Warning, methodName, log);
 		}
 
-		public Task Warning(string log)
+		public Task Warning(Func<string> log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Warning, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Warning, methodName, log);
 		}
 
-		public Task Warning(Func<string> log)
+		public Task Warning(Exception ex, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Warning, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Warning, methodName, ex.ToString());
 		}
 
-		public Task Warning(Exception ex)
+		public Task Error(string log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Warning, GetCallerMethodName(), ex.ToString());
+			return LogCheck(LogLevel.Error, methodName, log);
 		}
 
-		public Task Error(string log)
+		public Task Error(Func<string> log, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Error, GetCallerMethodName(), log);
+			return LogCheck(LogLevel.Error, methodName, log);
 		}
 
-		public Task Error(Func<string> log)
+		public Task Error(Exception ex, [CallerMemberName] string? methodName = null)
 		{
-			return LogCheck(LogLevel.Error, GetCallerMethodName(), log);
-		}
-
-		public Task Error(Exception ex)
-		{
-			return LogCheck(LogLevel.Error, GetCallerMethodName(), ex.ToString());
+			return LogCheck(LogLevel.Error, methodName, ex.ToString());
 		}
 
 		protected Task LogCheck(LogLevel loglevel, string? methodName, string log)
