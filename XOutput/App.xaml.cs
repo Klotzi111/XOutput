@@ -16,7 +16,6 @@ namespace XOutput
 	{
 		private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(App));
 
-		private MainWindowViewModel? mainWindowViewModel;
 		private SingleInstanceProvider singleInstanceProvider;
 		private ArgumentParser argumentParser;
 
@@ -63,7 +62,6 @@ namespace XOutput
 				try
 				{
 					var mainWindow = ApplicationContext.Global.Resolve<MainWindow>();
-					mainWindowViewModel = mainWindow.ViewModel;
 					MainWindow = mainWindow;
 					singleInstanceProvider.ShowEvent += mainWindow.ForceShow;
 					if (!argumentParser.Minimized)
@@ -87,7 +85,8 @@ namespace XOutput
 
 		private void Application_Exit(object sender, ExitEventArgs e)
 		{
-			mainWindowViewModel?.Dispose();
+			// do not dispose ViewModel of MainWindow here, it is disposed by the window itself
+			// double dispose causes crash from VigemClient
 			singleInstanceProvider.StopNamedPipe();
 			singleInstanceProvider.Close();
 			ApplicationContext.Global.Close();

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
@@ -126,14 +125,7 @@ namespace XOutput.Devices.XInput.Vigem
 			{
 				controller.Disconnect();
 			}
-			try
-			{
-				client.Dispose();
-			}
-			catch (SEHException)
-			{
-				logger.Error("VigemClient Dispose failed");
-			}
+			client.Dispose();
 		}
 
 		public IXbox360Controller GetController(int controllerCount)
