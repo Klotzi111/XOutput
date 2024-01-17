@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using Microsoft.Win32.SafeHandles;
 
@@ -16,6 +17,10 @@ namespace XOutput.Devices.XInput.SCPToolkit
 		private const string SCPBusClassGUID = "{F679F562-3164-42CE-A4DB-E7DDBE723909}";
 
 		private readonly SafeFileHandle safeFileHandle;
+
+		public ImmutableArray<EmulatedControllerType> SupportedControllerTypes => [EmulatedControllerType.Xbox360];
+
+		public EmulatedControllerType DefaultControllerType => EmulatedControllerType.Xbox360;
 
 		public ScpDevice() : this(0) { }
 		public ScpDevice(int instance)

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using XOutput.Devices;
 using XOutput.UI.Component;
 
 namespace XOutput.UI.Windows
@@ -64,5 +65,25 @@ namespace XOutput.UI.Windows
 				}
 			}
 		}
+
+		public bool ControllerTypeSupported => supportedControllerTypes.Count > 0;
+
+		private readonly ObservableCollection<ComboBoxItem> supportedControllerTypes = new ObservableCollection<ComboBoxItem>();
+		public ObservableCollection<ComboBoxItem> SupportedControllerTypes => supportedControllerTypes;
+
+		private ComboBoxItemWithValue<EmulatedControllerType>? controllerType;
+		public ComboBoxItemWithValue<EmulatedControllerType>? ControllerType
+		{
+			get => controllerType;
+			set
+			{
+				if (controllerType != value)
+				{
+					controllerType = value;
+					OnPropertyChanged(nameof(ControllerType));
+				}
+			}
+		}
+
 	}
 }

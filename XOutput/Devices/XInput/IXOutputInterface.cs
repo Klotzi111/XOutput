@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace XOutput.Devices.XInput
 {
@@ -8,6 +9,15 @@ namespace XOutput.Devices.XInput
 	/// </summary>
 	public interface IXOutputInterface : IDisposable
 	{
+		/// <summary>
+		/// Gets all the controller types that this controller can be emulated as.
+		/// </summary>
+		public ImmutableArray<EmulatedControllerType> SupportedControllerTypes { get; }
+		/// <summary>
+		/// Gets the default controller type to emulate.
+		/// </summary>
+		public EmulatedControllerType DefaultControllerType { get; }
+
 		/// <summary>
 		/// Plugs in a new virutal XInput device.
 		/// </summary>

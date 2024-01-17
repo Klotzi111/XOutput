@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
@@ -37,6 +38,10 @@ namespace XOutput.Devices.XInput.Vigem
 
 		private readonly ViGEmClient client;
 		private readonly Dictionary<int, IVirtualGamepad> controllers = new();
+
+		public ImmutableArray<EmulatedControllerType> SupportedControllerTypes => [EmulatedControllerType.Xbox360, EmulatedControllerType.DualShock4];
+
+		public EmulatedControllerType DefaultControllerType => EmulatedControllerType.Xbox360;
 
 		public VigemDevice()
 		{

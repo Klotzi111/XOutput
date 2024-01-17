@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Nefarius.ViGEm.Client;
@@ -43,13 +44,17 @@ namespace XOutput.Devices
 		/// </summary>
 		public bool ForceFeedbackSupported => xOutputInterface is VigemDevice;
 		/// <summary>
-		/// Gets if using different controller types is supported.
-		/// </summary>
-		public bool ControllerTypeSupported => xOutputInterface is VigemDevice;
-		/// <summary>
 		/// Gets the force feedback device.
 		/// </summary>
 		public IInputDevice? ForceFeedbackDevice { get; set; }
+		/// <summary>
+		/// Gets all the controller types that this controller can be emulated as.
+		/// </summary>
+		public ImmutableArray<EmulatedControllerType> SupportedControllerTypes => xOutputInterface?.SupportedControllerTypes ?? ImmutableArray<EmulatedControllerType>.Empty;
+		/// <summary>
+		/// Gets the default controller type to emulate.
+		/// </summary>
+		public EmulatedControllerType? DefaultControllerType => xOutputInterface?.DefaultControllerType;
 
 		private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(GameController));
 
@@ -139,7 +144,8 @@ namespace XOutput.Devices
 			var pluginResult = false;
 			if (xOutputInterface is VigemDevice vigem)
 			{
-				pluginResult = vigem.Plugin(controllerCount, EmulatedControllerType.DualShock4);
+				var controllerType = Mapper.ControllerType ?? EmulatedControllerType.Xbox360;
+				pluginResult = vigem.Plugin(controllerCount, controllerType);
 			}
 			else
 			{

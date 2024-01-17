@@ -30,7 +30,7 @@ namespace XOutput.Devices.Mapper
 		/// The type of the controller to be emulated.
 		/// NOTE: This is only used by ViGEm.
 		/// </summary>
-		public EmulatedControllerType ControllerType { get; set; } = EmulatedControllerType.Xbox360;
+		public EmulatedControllerType? ControllerType { get; set; }
 
 		public Dictionary<XInputTypes, MapperDataCollection> Mappings { get; set; }
 

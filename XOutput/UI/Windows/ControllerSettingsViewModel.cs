@@ -34,6 +34,22 @@ namespace XOutput.UI.Windows
 					Model.ForceFeedback = item;
 				}
 			}
+
+			var selectedControllerType = controller.Mapper.ControllerType ?? controller.DefaultControllerType;
+			ComboBoxItemWithValue<EmulatedControllerType>? defaultControllerType = null;
+			foreach (var controllerType in controller.SupportedControllerTypes)
+			{
+				var comboItem = new ComboBoxItemWithValue<EmulatedControllerType>(controllerType)
+				{
+					Content = new TextBlock(new Run(controllerType.ToString()))
+				};
+				Model.SupportedControllerTypes.Add(comboItem);
+				if (controllerType == selectedControllerType)
+				{
+					defaultControllerType = comboItem;
+				}
+			}
+			Model.ControllerType = defaultControllerType;
 		}
 
 		public void ConfigureAll()
@@ -64,6 +80,11 @@ namespace XOutput.UI.Windows
 				controller.Mapper.ForceFeedbackDevice = null;
 				controller.ForceFeedbackDevice = null;
 			}
+		}
+
+		public void SetControllerType()
+		{
+			controller.Mapper.ControllerType = Model.ControllerType?.value;
 		}
 
 		public void SetStartWhenConnected()
