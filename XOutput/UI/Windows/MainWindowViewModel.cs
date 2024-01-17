@@ -73,9 +73,8 @@ namespace XOutput.UI.Windows
 			return settings;
 		}
 
-		public void Initialize(Action<string> log)
+		private void LoadLanguage()
 		{
-			this.log = log;
 			LanguageManager languageManager = LanguageManager.Instance;
 			try
 			{
@@ -91,6 +90,10 @@ namespace XOutput.UI.Windows
 				log(error);
 				MessageBox.Show(error, Translate("Warning"));
 			}
+		}
+
+		private void CheckWhiteListToHidGuard()
+		{
 			if (settings.HidGuardianEnabled)
 			{
 				try
@@ -112,34 +115,44 @@ namespace XOutput.UI.Windows
 					MessageBox.Show(ex.ToString());
 				}
 			}
+		}
+
+		private void CheckVirtualControllerDriverAvailable()
+		{
 			bool vigem = VigemDevice.IsAvailable();
 			bool scp = ScpDevice.IsAvailable();
 			if (vigem)
 			{
+				logger.Info("ViGEm is installed.");
 				if (scp)
 				{
-					logger.Info("SCPToolkit is installed only.");
 					log(Translate("ScpInstalled"));
 				}
 				installed = true;
 			}
+			else if (scp)
+			{
+				logger.Info("Only SCPToolkit is installed.");
+				log(Translate("VigemNotInstalled"));
+				installed = true;
+			}
 			else
 			{
-				if (scp)
-				{
-					logger.Info("ViGEm is installed.");
-					log(Translate("VigemNotInstalled"));
-					installed = true;
-				}
-				else
-				{
-					logger.Error("Neither ViGEm nor SCPToolkit is installed.");
-					string error = Translate("VigemAndScpNotInstalled");
-					log(error);
-					installed = false;
-					MessageBox.Show(error, Translate("Error"));
-				}
+				logger.Error("Neither ViGEm nor SCPToolkit is installed.");
+				string error = Translate("VigemAndScpNotInstalled");
+				log(error);
+				installed = false;
+				MessageBox.Show(error, Translate("Error"));
 			}
+		}
+
+		public void Initialize(Action<string> log)
+		{
+			this.log = log;
+			LoadLanguage();
+			CheckWhiteListToHidGuard();
+			CheckVirtualControllerDriverAvailable();
+
 			Model.Settings = settings;
 			RefreshGameControllers();
 
@@ -158,17 +171,17 @@ namespace XOutput.UI.Windows
 			settings.GetOrCreateInputConfiguration(keyboard.ToString(), keyboard.InputConfiguration);
 			InputDevices.Instance.Add(keyboard);
 			Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), keyboard, false)));
+
 			logger.Debug("Creating mouse controller");
 			Devices.Input.Mouse.Mouse mouse = new Devices.Input.Mouse.Mouse();
 			settings.GetOrCreateInputConfiguration(mouse.ToString(), mouse.InputConfiguration);
 			InputDevices.Instance.Add(mouse);
 			Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), mouse, false)));
+
 			foreach (var mapping in settings.Mapping)
 			{
 				AddController(mapping);
 			}
-			log(string.Format(LanguageModel.Instance.Translate("ControllerConnected"), LanguageModel.Instance.Translate("Keyboard")));
-			logger.Info("Keyboard controller is connected");
 		}
 
 		public void SaveSettings()

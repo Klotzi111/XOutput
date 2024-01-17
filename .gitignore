@@ -19,3 +19,6 @@ TestResults
 
 # node modules
 Web/node_modules
+
+# VS Launch Settings
+launchSettings.json
