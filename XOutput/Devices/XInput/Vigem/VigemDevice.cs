@@ -14,6 +14,27 @@ namespace XOutput.Devices.XInput.Vigem
 	{
 		private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(VigemDevice));
 
+		private static readonly bool deviceDriverAvailable;
+
+		private static bool CheckDriverAvailable()
+		{
+			try
+			{
+				new ViGEmClient().Dispose();
+				return true;
+			}
+			catch
+			{
+				// all kind of exceptions mean that ViGEm is not available (or at least not useable)
+				return false;
+			}
+		}
+
+		static VigemDevice()
+		{
+			deviceDriverAvailable = CheckDriverAvailable();
+		}
+
 		private readonly ViGEmClient client;
 		private readonly Dictionary<int, IXbox360Controller> controllers = new Dictionary<int, IXbox360Controller>();
 		private readonly Dictionary<XInputTypes, VigemXbox360ButtonMapping> buttonMappings = new Dictionary<XInputTypes, VigemXbox360ButtonMapping>();
@@ -32,16 +53,7 @@ namespace XOutput.Devices.XInput.Vigem
 		/// <returns></returns>
 		public static bool IsAvailable()
 		{
-			try
-			{
-				new ViGEmClient().Dispose();
-				return true;
-			}
-			catch
-			{
-				// all kind of exceptions mean that ViGEm is not available (or at least not useable)
-				return false;
-			}
+			return deviceDriverAvailable;
 		}
 
 		/// <summary>
